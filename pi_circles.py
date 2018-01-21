@@ -42,37 +42,34 @@ api_key = "0bd8f5fb32262aa45c4598c2f1ef5b44"
 lat = 39.9936
 lng = -105.0897
 
-number_of_hours = 12
-number_of_LEDs  = 24
-
 # Refresh rate
 # GPIO pins...
 
 # COLORS
 red             =   (255, 0, 0)
 magenta         =   (255, 0, 255)
-orange          =   (255, 125, 0)
+orange          =   (200, 50, 0)
 yellow          =   (255, 255, 0)
-light_yellow    =   (200, 200, 100)
+light_yellow    =   (100, 100, 30)
 green           =   (0, 255, 0)
 light_green     =   (75, 255, 75)
 dark_green      =   (0, 100, 0)
 blue            =   (0, 0, 255)
 dark_blue       =   (0, 0, 100)
-light_blue      =   (120, 150, 255)
-gray_blue       =   (70, 70, 190)
+light_blue      =   (100, 120, 255)
+gray_blue       =   (50, 50, 150)
 cyan            =   (0, 255, 255)
 indigo          =   (75, 0, 130)
 violet          =   (148, 0, 211)
 white           =   (255, 255, 255)
-light_gray      =   (200, 200, 200)
+light_gray      =   (100, 100, 100)
 gray            =   (80, 80, 80)
 black           =   (0, 0, 0)
 
-# unicode circle ( for terminalClock() )
-#_circle = str(unichr(11044).encode('utf-8'))
-#circle = deepcopy(_circle)
-circle = 'o'
+number_of_hours = 12
+number_of_LEDs  = 24
+cursor_color    = red
+
 
 def signal_handler(signum, frame):
     # (Show the cursor again)
@@ -337,11 +334,9 @@ class Sky(object):
         elif summary == 'cursor':
             weather_type = 'cursor'
         
+        # If we encounter a phrase we don't know, check the icon
+        # (the icons don't change, but the summaries may change a lot)
         else:
-            # If we encounter a phrase we don't know, check the icon
-            # (the icons don't change, but the summaries may change a lot)
-            #self.unknown(HOUR)
-            #return
             # Check icons
             if re.search('clear', icon) is not None:
                 weather_type = 'clear'
@@ -378,26 +373,31 @@ class Sky(object):
 
         for i in range(number_of_hours):
             # Get HOUR, summary, and icon for current LED
-            this_hour = next_12.pop(0)
-            HOUR_24 = str(this_hour["time"])[11:13]
-            HOUR_12 = '{:02}'.format(int(HOUR_24) % 12)
-            summary = this_hour["summary"]
-            icon = this_hour["icon"]
+            this_hour   = next_12.pop(0)
+            HOUR_24     = str(this_hour["time"])[11:13]
+            HOUR_12     = '{:02}'.format(int(HOUR_24) % 12)
+            summary     = this_hour["summary"]
+            icon        = this_hour["icon"]
 
+            # set the hour
             self.setHour(HOUR_12, summary, icon, display_type)
             
             # Reset color values to pure (undimmed, unadjusted) color
-            LED_status = LedHandler.LED_status[HOUR_12]
-            RGB_now = LED_status["RGB"]["now"]
-            RGB_now = LedHandler.capRGB(RGB_now)
+            LED_status  = LedHandler.LED_status[HOUR_12]
+            RGB_now     = LED_status["RGB"]["now"]
+            RGB_now     = LedHandler.capRGB(RGB_now)
             LED_status["RGB"]["dimmed"]     = RGB_now
             LED_status["RGB"]["adjusted"]   = RGB_now
 
             # Dim each hour after current a little more
             if i == 0:
-              LedHandler.setLEDBrightness(HOUR_12, 0)
+                #LedHandler.setLEDBrightness(HOUR_12, 0)
+                summary     = "cursor"
+                icon        = "cursor"
+                self.setHour(HOUR_12, summary, icon, display_type)
             else:
-              LedHandler.setLEDBrightness(HOUR_12, 0.65**i)
+                LedHandler.setLEDBrightness(HOUR_12, 0.70**i)
+                pass
 
             LedHandler.updateLED(HOUR_12)
 
@@ -538,14 +538,14 @@ class Sky(object):
         LED_status = LedHandler.LED_status[HOUR]
         
         # Lists of color choices
-        dim_whites  = [tuple(np.divide(white,x)) for x in range(2,8)]
-        warm_colors = [red, magenta, violet, yellow, light_yellow]
+        dim_whites  = [tuple(np.divide(white,x)) for x in range(5,10)]
+        warm_colors = [red, orange, magenta, violet, yellow, light_yellow]
         cool_colors = [blue, indigo, cyan]
         end_colors  = dim_whites + warm_colors + cool_colors
         
         # Lists of time intervals
-        up_intervals    = [5,7,10]
-        down_intervals  = [10,15,20]
+        up_intervals    = [5,7,10,15,20]
+        down_intervals  = [10,15,20,30]
         up_interval     = choice(up_intervals)
         down_interval   = choice(down_intervals)
         
@@ -567,118 +567,72 @@ class Sky(object):
 
     def clear(self, HOUR):
         color = yellow
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
-        return
 
-        color = "yellow"
-        LedHandler.terminalPrint(HOUR, color)
+        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         
     def partlyCloudy(self, HOUR):
-        color1 = yellow
-        color2 = light_yellow
-        time_constant = 10
-        fluxuation = 10
+        color1          = yellow
+        color2          = light_yellow
+        time_constant   = 30
+        fluxuation      = 10
         LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
-        return
-
-        color = light_yellow
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
-        return
-
-        color = "white"
-        LedHandler.terminalPrint(HOUR, color)
         
     def cloudy(self, HOUR):
         color = gray
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
-        return
-
-        color = "white"
-        LedHandler.terminalPrint(HOUR, color)
         
     def rain(self, HOUR):
-        color1 = gray_blue
-        color2 = light_blue
-
-        color1 = (120, 150, 255)
-        color2 = (110, 140, 255)
-        time_constant = 1
-        fluxuation = 1
+        color1          = gray_blue
+        color2          = light_blue
+        time_constant   = 10
+        fluxuation      = 5
 
         LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
-        return
-
-        color = "cyan"
-        LedHandler.terminalPrint(HOUR, color)
 
     def thunderstorm(self, HOUR):
         LED_status = LedHandler.LED_status[HOUR]
         
         # If it is currently in a lightning bolt, keep going (with current values)
-        #if LED_status["lightning"]["status"] == True:
         if LED_status["lightning"]["status"] in ("start",True):
             RGB_final = LedHandler.lightning(HOUR)
-            #print "LIGHTNING"
     
-            if randint(1, 40) == 1:
+            if randint(1, 80) == 1:
                 LED_status["lightning"]["status"] = "start"
-                #RGB_now = LED_status["RGB"]["now"]
-                #LED_status["lightning"]["entry_color"] = RGB_now
+                RGB_now = LED_status["RGB"]["now"]
+                LED_status["lightning"]["entry_color"] = RGB_now
                 RGB_final = LedHandler.lightning(HOUR)
         
         # RANDOM LIGHTNING STRIKE
-        elif randint(1, 80) == 1:
+        elif randint(1, 100) == 1:
             self.lightningSetup(HOUR)
             RGB_final = LedHandler.lightning(HOUR)
     
         # Otherwise, bounce / flicker
         else:
-            interval = 20
-            fluxuation = 7
-            #RGB_final = LedHandler.bounce(HOUR, dark_blue, indigo, interval)
-            #print "bounce"
-            RGB_final = LedHandler.flicker(HOUR, violet, indigo, interval, fluxuation)
-        return
-
-        color = "blue"
-        LedHandler.terminalPrint(HOUR, color)
+            interval    = 20
+            fluxuation  = 7
+            RGB_final   = LedHandler.bounce(HOUR, dark_blue, indigo, interval)
+            #RGB_final   = LedHandler.flicker(HOUR, violet, indigo, interval, fluxuation)
         
     def snow(self, HOUR):
-        color1 = white
-        color2 = light_gray
-        time_constant = 1
-        fluxuation = 1
+        color1          = gray
+        color2          = light_gray
+        time_constant   = 6
+        fluxuation      = 4
 
-        #LedHandler.LED_status[HOUR]["RGB"]["now"] = color1
         LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
-        return
-
-        color = "white"
-        LedHandler.terminalPrint(HOUR, color)
 
     def wind(self, HOUR):
-        color = cyan
+        color           = green
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
-        return
-
-        color = "magenta"
-        LedHandler.terminalPrint(HOUR, color)
 
     def unknown(self, HOUR):
-        color = red
+        color           = orange
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
-        return
-
-        color = "grey"
-        LedHandler.terminalPrint(HOUR, color)
 
     def cursor(self, HOUR):
-        color = green
+        color           = cursor_color
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
-        return
-
-        color = "grey"
-        LedHandler.terminalPrint(HOUR, color)
 
 
 class LedHandler(object):
@@ -895,7 +849,7 @@ class LedHandler(object):
         led = self.strip
         n = int(HOUR)
         led.setPixelColorRGB(n*2    , G, R, B)
-        led.setPixelColorRGB(n*2 + 1, G, R, B)
+        #led.setPixelColorRGB(n*2 + 1, G, R, B)
         led.show()
     
     def setLEDBrightness(self, HOUR, brightness):
@@ -1181,25 +1135,21 @@ GPIO.setup(LED_CTRL_2, GPIO.OUT)
 Parser.parseWeather()
 latency = 0.01
 
-for item in Parser.next_12:
-    #item["summary"] = "clear"
-    #item["summary"] = "cloudy"
-    item["summary"] = "partly cloudy"
-    #item["summary"] = "rain"
-    #item["summary"] = "thunderstorm"
-    #item["summary"] = "snow"
-    #item["summary"] = "wind"
-    #item["summary"] = "unknown"
-    #item["summary"] = "cursor"
+#for item in Parser.next_12:
+#    #item["summary"] = "clear"
+#    #item["summary"] = "cloudy"
+#    #item["summary"] = "partly cloudy"
+#    item["summary"] = "light rain"
+#    #item["summary"] = "thunderstorm"
+#    #item["summary"] = "snow"
+#    #item["summary"] = "wind"
+#    #item["summary"] = "unknown"
+#    #item["summary"] = "cursor"
 
-#Parser.next_12[3]["summary"] = "thunderstorm"
-#Parser.next_12[4]["summary"] = "thunderstorm"
-#Parser.next_12[5]["summary"] = "thunderstorm"
-
-while True:
-    Sky.set_12_Hours("uniform")
-    LedHandler.strip.show()
-    time.sleep(latency)
+#while True:
+#    Sky.set_12_Hours("uniform")
+#    LedHandler.strip.show()
+#    time.sleep(latency)
 
 #-------------------------------------------------------------------------------
 while True:
