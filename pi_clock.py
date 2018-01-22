@@ -63,7 +63,7 @@ cyan                    =       (0, 255, 255)
 indigo                  =       (75, 0, 130)
 violet                  =       (148, 0, 211)
 white                   =       (255, 255, 255)
-gray                    =       (100, 100, 100)
+gray                    =       (50, 50, 50)
 black                   =       (0, 0, 0)
 
 
@@ -243,33 +243,35 @@ class Sky(object):
     
     icons:
     ------
-    clear-day                               Clear
+    clear-day               Clear
     clear-night
-    cloudy                                  Cloudy
+    cloudy                  Cloudy
     partly-cloudy-day
     partly-cloudy-night
     fog
-    snow                                    Snow
+    snow                    Snow
     sleet
-    rain                                    Rain
-    wind                                    Wind
+    rain                    Rain
+    wind                    Wind
     """
     def __init__(self):
-        self.clear_list         = ["sunny", "clear"]
-        self.cloudy_list        = ["cloudy", "overcast", "fog", "foggy"]
-        self.snow_list          = ["snow", "sleet", "flurries"]
-        self.rain_list          = ["rain", "drizzle"]
-        self.thunder_list       = ["thunderstorm", "thunder"]
-        self.wind_list          = ["wind", "windy", "breezy"]
+        self.clear_list     = ["sunny", "clear"]
+        self.cloudy_list    = ["cloudy", "clouds", "overcast", "fog", "foggy"]
+        self.snow_list      = ["snow", "sleet", "flurries"]
+        self.rain_list      = ["rain", "drizzle", "mist", "misty"]
+        self.thunder_list   = ["thunderstorm", "thunderstorms", "thunder", "lightning"]
+        self.wind_list      = ["wind", "windy", "breezy", "gust", "gusts", "gusty"]
 
         # Static display colors (if desired)
-        self.clear_static               = yellow
-        self.cloudy_static              = gray
-        self.snow_static                = white
-        self.rain_static                = light_blue
-        self.thunder_static     = violet
-        self.wind_static                = cyan
-        self.unknown_static     = red
+        self.clear_static           = yellow
+        self.cloudy_static          = gray
+        self.partly_cloudy_static   = light_yellow
+        self.snow_static            = white
+        self.rain_static            = light_blue
+        self.thunder_static         = violet
+        self.wind_static            = cyan
+        self.unknown_static         = red
+        self.cursor_static          = green
 
     def determineWeather(self, HOUR, summary, icon):
         # Search summary string for key words
@@ -508,17 +510,11 @@ class Sky(object):
         color = yellow
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         return
-
-        color = "yellow"
-        LedHandler.terminalPrint(HOUR, color)
         
     def cloudy(self, HOUR):
         color = gray
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         return
-
-        color = "white"
-        LedHandler.terminalPrint(HOUR, color)
         
     def rain(self, HOUR):
         color1 = gray_blue
@@ -605,39 +601,39 @@ class LedHandler(object):
             HOUR = '{:02d}'.format(i)
             self.LED_status[HOUR] = {}
             self.LED_status[HOUR]["RGB"] = {}
-            self.LED_status[HOUR]["RGB"]["now"]                     = (0,0,0)
-            self.LED_status[HOUR]["RGB"]["dimmed"]          = (0,0,0)
-            self.LED_status[HOUR]["RGB"]["adjusted"]        = (0,0,0)
+            self.LED_status[HOUR]["RGB"]["now"]         = (0,0,0)
+            self.LED_status[HOUR]["RGB"]["dimmed"]      = (0,0,0)
+            self.LED_status[HOUR]["RGB"]["adjusted"]    = (0,0,0)
 
             self.LED_status[HOUR]["drift"] = {}
-            self.LED_status[HOUR]["drift"]["status"]        = False
+            self.LED_status[HOUR]["drift"]["status"]    = False
             self.LED_status[HOUR]["drift"]["direction"] = (0,0,0)
 
             self.LED_status[HOUR]["lightning"] = {}
-            self.LED_status[HOUR]["lightning"]["status"]            = False
-            self.LED_status[HOUR]["lightning"]["entry_color"]       = (0,0,0)
-            self.LED_status[HOUR]["lightning"]["brightest"]         = (0,0,0)
-            self.LED_status[HOUR]["lightning"]["dimmest"]           = (0,0,0)
-            self.LED_status[HOUR]["lightning"]["intervals"]         = [1,1]
+            self.LED_status[HOUR]["lightning"]["status"]      = False
+            self.LED_status[HOUR]["lightning"]["entry_color"] = (0,0,0)
+            self.LED_status[HOUR]["lightning"]["brightest"]   = (0,0,0)
+            self.LED_status[HOUR]["lightning"]["dimmest"]     = (0,0,0)
+            self.LED_status[HOUR]["lightning"]["intervals"]   = [1,1]
 
         # Memory for uniform shows
-        self.LED_status["clear"]                = deepcopy(self.LED_status["00"])
-        self.LED_status["cloudy"]               = deepcopy(self.LED_status["00"])
-        self.LED_status["snow"]                 = deepcopy(self.LED_status["00"])
-        self.LED_status["rain"]                 = deepcopy(self.LED_status["00"])
+        self.LED_status["clear"]        = deepcopy(self.LED_status["00"])
+        self.LED_status["cloudy"]       = deepcopy(self.LED_status["00"])
+        self.LED_status["snow"]         = deepcopy(self.LED_status["00"])
+        self.LED_status["rain"]         = deepcopy(self.LED_status["00"])
         self.LED_status["thunderstorm"] = deepcopy(self.LED_status["00"])
-        self.LED_status["wind"]                 = deepcopy(self.LED_status["00"])
-        self.LED_status["unknown"]              = deepcopy(self.LED_status["00"])
+        self.LED_status["wind"]         = deepcopy(self.LED_status["00"])
+        self.LED_status["unknown"]      = deepcopy(self.LED_status["00"])
 
-        LED_COUNT = 24                  # Number of LED NeoPixels
-        LED_PIN = 18                    # GPIO pin (must support PWM)
+        LED_COUNT   = 24        # Number of LED NeoPixels
+        LED_PIN     = 18        # GPIO pin (must support PWM)
         LED_FREQ_HZ = 800000    # LED signal frequency (usually 800khz)
-        LED_DMA = 5                             # DMA channel to use for generating signal
-        LED_INVERT = False              # True when using NPN transistor level shift
+        LED_DMA     = 5         # DMA channel to use for generating signal
+        LED_INVERT  = False     # True when using NPN transistor level shift
         
         # Create NeoPixel object with appropriate configuration.
         self.strip = Adafruit_NeoPixel( LED_COUNT, LED_PIN, LED_FREQ_HZ,
-                        LED_DMA, LED_INVERT)
+                                        LED_DMA, LED_INVERT )
         # Intialize the library (must be called once before other functions).
         self.strip.begin()
 
@@ -814,8 +810,8 @@ class LedHandler(object):
         RGB_dimmed = self.LED_status[HOUR]["RGB"]["dimmed"]
         RGB_adjusted = self.LED_status[HOUR]["RGB"]["adjusted"]
         
-        #color = RGB_adjusted
-        color = RGB_dimmed
+        #color = RGB_dimmed
+        color  = RGB_adjusted
         self.setColor(HOUR, color)
     
 
@@ -1082,7 +1078,13 @@ Parser.parseWeather()
 latency = 0.01
 
 for item in Parser.next_12:
-    item["summary"] = "thunderstorm"
+    #item["summary"] = "clear"
+    item["summary"] = "cloudy"
+    #item["summary"] = "rain"
+    #item["summary"] = "thunderstorm"
+    #item["summary"] = "snow"
+    #item["summary"] = "wind"
+    #item["summary"] = "unknown"
 
 #Parser.next_12[3]["summary"] = "thunderstorm"
 #Parser.next_12[4]["summary"] = "thunderstorm"
