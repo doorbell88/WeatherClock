@@ -1,0 +1,14 @@
+- Add shutoff switch
+
+- Run at boot:
+    - shutoff switch listener
+    - run weather clock
+    - update date/time (NTP server)
+
+- Polish setup.sh
+
+
+
+INSTALLING MODULES
+------------------
+sudo pip install gpiozerp
