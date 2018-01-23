@@ -2,6 +2,8 @@
 
 - Run at boot:
     - shutoff switch listener
+        --> vim /etc/rc.local
+            --> python ~/WeatherClock/shutdown_switch.py
     - run weather clock
     - update date/time (NTP server)
 
@@ -11,4 +13,4 @@
 
 INSTALLING MODULES
 ------------------
-sudo pip install gpiozerp
+sudo pip install gpiozero
