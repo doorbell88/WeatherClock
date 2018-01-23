@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 from gpiozero import Button, LED
 from signal import pause
 import os, sys
@@ -20,7 +20,8 @@ def when_released():
 
 def shutdown():
     print "Yay!"
-    os.system("sudo python ~/WeatherClock/turn_off_LED_array.py")
+    os.system("/home/pi/WeatherClock/kill_weather_clock.sh {}".format("pi_clock.py"))
+    os.system("sudo python /home/pi/WeatherClock/turn_off_LED_array.py")
     time.sleep(1)
     os.system("sudo poweroff")
 
