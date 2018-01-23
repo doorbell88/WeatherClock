@@ -46,25 +46,44 @@ lng = -105.0897
 # GPIO pins...
 
 # COLORS
+#red             =   (255, 0, 0)
+#magenta         =   (255, 0, 255)
+#orange          =   (200, 50, 0)
+#yellow          =   (255, 255, 0)
+#light_yellow    =   (100, 100, 30)
+#green           =   (0, 255, 0)
+#light_green     =   (75, 255, 75)
+#dark_green      =   (0, 100, 0)
+#blue            =   (0, 0, 255)
+#dark_blue       =   (0, 0, 100)
+#light_blue      =   (100, 120, 255)
+#gray_blue       =   (50, 50, 150)
+#cyan            =   (0, 255, 255)
+#indigo          =   (75, 0, 130)
+#violet          =   (148, 0, 211)
+#white           =   (255, 255, 255)
+#light_gray      =   (100, 100, 100)
+#gray            =   (80, 80, 80)
+#black           =   (0, 0, 0)
+black           =   (0, 0, 0)
+white           =   (255, 255, 255)
 red             =   (255, 0, 0)
-magenta         =   (255, 0, 255)
-orange          =   (200, 50, 0)
-yellow          =   (255, 255, 0)
-light_yellow    =   (100, 100, 30)
 green           =   (0, 255, 0)
+blue            =   (0, 0, 255)
+cyan            =   (0, 255, 255)
+magenta         =   (255, 0, 255)
+yellow          =   (255, 255, 0)
+orange          =   (255, 50, 0)
+indigo          =   (70, 0, 255)
+violet          =   (100, 0, 255)
+light_yellow    =   (100, 100, 30)
 light_green     =   (75, 255, 75)
 dark_green      =   (0, 100, 0)
-blue            =   (0, 0, 255)
-dark_blue       =   (0, 0, 100)
 light_blue      =   (100, 120, 255)
+dark_blue       =   (0, 0, 100)
 gray_blue       =   (50, 50, 150)
-cyan            =   (0, 255, 255)
-indigo          =   (75, 0, 130)
-violet          =   (148, 0, 211)
-white           =   (255, 255, 255)
 light_gray      =   (100, 100, 100)
 gray            =   (80, 80, 80)
-black           =   (0, 0, 0)
 
 number_of_hours = 12
 number_of_LEDs  = 24
@@ -849,7 +868,7 @@ class LedHandler(object):
         led = self.strip
         n = int(HOUR)
         led.setPixelColorRGB(n*2    , G, R, B)
-        #led.setPixelColorRGB(n*2 + 1, G, R, B)
+        led.setPixelColorRGB(n*2 + 1, G, R, B)
         led.show()
     
     def setLEDBrightness(self, HOUR, brightness):
@@ -984,7 +1003,9 @@ class LedHandler(object):
                 RGB_final = self.drift(HOUR, brightest, dimmest, down_interval)
             else:
                 LED_status["lightning"]["status"] = False
-                RGB_final = dimmest
+                #RGB_final = dimmest
+                LED_status["drift"]["status"] == True
+                RGB_final = self.drift(HOUR, brightest, dimmest, down_interval)
 
         else:
             RGB_final = LED_status["RGB"]["now"]
@@ -1139,13 +1160,13 @@ latency = 0.01
 #    #item["summary"] = "clear"
 #    #item["summary"] = "cloudy"
 #    #item["summary"] = "partly cloudy"
-#    item["summary"] = "light rain"
-#    #item["summary"] = "thunderstorm"
+#    #item["summary"] = "light rain"
+#    item["summary"] = "thunderstorm"
 #    #item["summary"] = "snow"
 #    #item["summary"] = "wind"
 #    #item["summary"] = "unknown"
 #    #item["summary"] = "cursor"
-
+#
 #while True:
 #    Sky.set_12_Hours("uniform")
 #    LedHandler.strip.show()
