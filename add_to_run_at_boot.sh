@@ -15,7 +15,7 @@ FILE="/etc/rc.local"
 # get line number of "$pattern"
 get_line_number() {
     pattern="$1"
-    line_number=$(grep -n $FILE -e $pattern \
+    line_number=$(grep -n ${FILE} -e ${pattern} \
                   | tail -n 1               \
                   | sed 's/:/ /'            \
                   | awk '{print $1}'        \
@@ -31,7 +31,7 @@ insert_line() {
     fi
 
     # insert line
-    sed -i "${line_number}i $content" $FILE
+    sed -i "${line_number}i ${content}" ${FILE}
     # increment $line_number
     line_number=$((line_number + 1))
 }
@@ -39,6 +39,9 @@ insert_line() {
 #===============================================================================
 #                                     MAIN
 #-------------------------------------------------------------------------------
+
+# First, make a backup!
+cp ${FILE}{,.bak}
 
 # get line number where "exit 0" occurs
 get_line_number "exit"
