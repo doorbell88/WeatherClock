@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#-------------------------------------------------------------------------------
+# Adds scripts to run at bootup.  Namely, adds the following to /etc/rc.local
+#   - shutdown_switch.py (to listen for a button press, and send a shutdown
+#                         command so the RaspberryPi shuts down safely)
+#   - weather_clock.py   (to run the weather clock)
+#-------------------------------------------------------------------------------
+
 set -e
 
 # CONSTANTS
