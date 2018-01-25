@@ -6,6 +6,7 @@
             --> python ~/WeatherClock/shutdown_switch.py
     - run weather clock
     - update date/time (NTP server)
+    - (git pull?)
 
 - Polish setup.sh
 
