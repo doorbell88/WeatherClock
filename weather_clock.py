@@ -601,14 +601,6 @@ class Sky(object):
     #----------  WEATHER DISPLAY METHODS  ----------#
 
     def start_up(self, HOUR):
-#        color1          = gray_blue
-#        color2          = light_blue
-#        time_constant   = 50
-#        fluxuation      = 0
-#
-#        LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
-#        return 
-#
         color1   = black
         color2   = green
         interval = 50
@@ -891,11 +883,15 @@ class LedHandler(object):
         self.setColorRGB(HOUR, R, G, B)
 
     def setColorRGB(self, HOUR, R, G, B):
-        led = self.strip
-        n = int(HOUR)
-        led.setPixelColorRGB(n*2    , G, R, B)
-        led.setPixelColorRGB(n*2 + 1, G, R, B)
-        led.show()
+        step          = (LED_COUNT / ACTIVE_LEDS)
+        LEDs_per_step = (LED_COUNT / 12)
+        n             = int(HOUR) * LEDs_per_step
+
+        # set pixel(s)
+        self.strip.setPixelColorRGB(n, G, R, B)
+        if step == 1:
+            self.strip.setPixelColorRGB(n + 1, G, R, B)
+        self.strip.show()
     
     def setLEDBrightness(self, HOUR, brightness):
         RGB_now = self.LED_status[HOUR]["RGB"]["now"]

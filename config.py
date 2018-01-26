@@ -34,6 +34,7 @@ LED_INVERT  = False         # True when using NPN transistor level shift
 
 ACTIVE_LEDS = 24            # (If you have 24 LEDs, but only want one lit up for
                             #  each hour, you would set ACTIVE_LEDS = 12)
+                            #   --> Currently only works with 12 or 24 LEDs
 
 
 #------------------------------- OTHER HARDWARE --------------------------------
