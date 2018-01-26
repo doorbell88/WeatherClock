@@ -1,16 +1,20 @@
-______________________________
+# Check if being run as root
+if (whoami != root) then
+    echo "Please run as root"
+    exit 1
+fi
+
+
+#______________________________
 ##### Python Modules
 sudo apt-get install python-pip
 
 pip install python-forecastio
-(pip install termcolor)
-(pip install pdb)
 pip install requests[security]
 	# (Or install them directly)
 	# pip install pyopenssl ndg-httpsclient pyasn1
-(pip install numpy)	#this takes a long time......
 
-______________________________
+#______________________________
 ##### WS2812 NeoPixel
 sudo apt-get update
 sudo apt-get install build-essential python-dev git scons swig
