@@ -25,7 +25,7 @@ def when_released():
 
 def shutdown():
     print "Yay!"
-    os.system("{}/{} {}".format(kill_script, weather_clock_filename))
+    os.system("{} {}".format(kill_script, weather_clock_filename))
     time.sleep(1)
     os.system("sudo poweroff")
 
