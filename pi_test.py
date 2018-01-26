@@ -1,6 +1,5 @@
 import time
 from neopixel import *
-#from pi_clock.py import *
 
 # LED strip configuration:
 LED_COUNT   = 24      # Number of LED pixels.
