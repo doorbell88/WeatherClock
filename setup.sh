@@ -20,11 +20,12 @@ sudo apt-get install python-pip
 
 pip install python-forecastio
 pip install requests[security]
+pip install gpiozero
 
 
 #------------------------------ WS2812 NeoPixel --------------------------------
 sudo apt-get update
-sudo apt-get install build-essential python-dev git scons swig
+sudo apt-get install build-essential python-dev scons swig
 
 git clone https://github.com/jgarff/rpi_ws281x.git
 cd rpi_ws281x
