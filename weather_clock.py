@@ -30,6 +30,10 @@ from copy import copy, deepcopy
 #from termcolor import colored, cprint
 #from term_colors import rgb, print_color, set_color, format_color
 from neopixel import *
+
+from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
+                   LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, \
+                   ACTIVE_LEDS
 """
 import wiringpi
 # import RPi.GPIO as GPIO ?
@@ -38,9 +42,9 @@ import wiringpi
 
 
 #####  CONSTANTS  #####
-api_key = "0bd8f5fb32262aa45c4598c2f1ef5b44"
-lat = 39.9936
-lng = -105.0897
+#api_key = "0bd8f5fb32262aa45c4598c2f1ef5b44"
+#lat = 39.9936
+#lng = -105.0897
 
 # Refresh rate
 # GPIO pins...
@@ -173,7 +177,8 @@ class Parser(object):
 
     def getWeather(self, time_window):
         # Get forecast from Dark Sky API
-        forecast = forecastio.load_forecast(api_key, lat, lng, time=time_window)
+        forecast = forecastio.load_forecast(DARK_SKY_API_KEY, LATITUDE, LONGITUDE,
+                                            time=time_window)
         byHour = forecast.hourly()
         
         current_conditions = forecast.currently()
@@ -206,7 +211,7 @@ class Parser(object):
     def getCurrentConditions(self):
         current_time = datetime.datetime.now()
         current_hour = str(current_time)[11:13]
-        forecast = forecastio.load_forecast(api_key, lat, lng)
+        forecast = forecastio.load_forecast(DARK_SKY_API_KEY, LATITUDE, LONGITUDE)
         current_conditions = forecast.currently()
         temp = current_conditions.temperature
         summary = current_conditions.summary
@@ -658,7 +663,7 @@ class LedHandler(object):
     """
     Controls the LEDs (sends color commands)
     """
-    def __init__(self, number_of_LEDs):
+    def __init__(self):
         # Memory for certain data about each LED's state
         self.LED_status = {}
         for i in range(number_of_hours):
@@ -691,11 +696,11 @@ class LedHandler(object):
         self.LED_status["unknown"]          = deepcopy(self.LED_status["00"])
         self.LED_status["cursor"]           = deepcopy(self.LED_status["00"])
 
-        LED_COUNT   = number_of_LEDs    # Number of LED NeoPixels
-        LED_PIN     = 18                # GPIO pin (must support PWM)
-        LED_FREQ_HZ = 800000            # LED signal frequency (usually 800khz)
-        LED_DMA     = 5                 # DMA channel to use for generating signal
-        LED_INVERT  = False             # True when using NPN transistor level shift
+        #LED_COUNT   = number_of_LEDs    # Number of LED NeoPixels
+        #LED_PIN     = 18                # GPIO pin (must support PWM)
+        #LED_FREQ_HZ = 800000            # LED signal frequency (usually 800khz)
+        #LED_DMA     = 5                 # DMA channel to use for generating signal
+        #LED_INVERT  = False             # True when using NPN transistor level shift
         
         # Create NeoPixel object with appropriate configuration.
         self.strip = Adafruit_NeoPixel( LED_COUNT, LED_PIN, LED_FREQ_HZ,
@@ -1137,7 +1142,7 @@ Parser = Parser()
 Temp = Temp(-20, 120)
 MotorHandler = MotorHandler()
 Sky = Sky()
-LedHandler = LedHandler(number_of_LEDs)
+LedHandler = LedHandler()
 """
 # Set up RPi GPIO pins
 GPIO.setmode(GPIO.BOARD)

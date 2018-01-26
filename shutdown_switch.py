@@ -3,10 +3,7 @@ from gpiozero import Button, LED
 from signal import pause
 import os, sys
 import time
-
-offGPIO  = int(sys.argv[1]) if len(sys.argv) >= 2 else 21
-holdTime = int(sys.argv[2]) if len(sys.argv) >= 3 else 6
-ledGPIO  = int(sys.argv[3]) if len(sys.argv) >= 4 else 16
+from config import BUTTON_PIN, BUTTON_HOLD_TIME, STATUS_LED_PIN
 
 def when_pressed():
     # start blinking with 1/2 second rate
@@ -25,8 +22,8 @@ def shutdown():
     time.sleep(1)
     os.system("sudo poweroff")
 
-led = LED(ledGPIO)
-btn = Button(offGPIO, hold_time=holdTime)
+led = LED(STATUS_LED_PIN)
+btn = Button(BUTTON_PIN, hold_time=BUTTON_HOLD_TIME)
 btn.when_held     = shutdown
 btn.when_pressed  = when_pressed
 btn.when_released = when_released
