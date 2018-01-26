@@ -6,7 +6,10 @@ import time
 from config import BUTTON_PIN, BUTTON_HOLD_TIME, STATUS_LED_PIN
 
 #--------------------------------- VARIABLES -----------------------------------
-weather_clock_file = "weather_clock.py"
+weather_clock_filename = "weather_clock.py"
+WeatherClock_dir       = "/home/pi/WeatherClock"
+kill_weather_clock_sh  = "kill_weather_clock.sh"
+kill_script            = "{}/{}".format(WeatherClock_dir, kill_weather_clock_sh)
 
 
 #------------------------------- BUTTON ACTIONS --------------------------------
@@ -22,8 +25,7 @@ def when_released():
 
 def shutdown():
     print "Yay!"
-    os.system("/home/pi/WeatherClock/kill_weather_clock.sh {}".format(weather_clock_file))
-    os.system("sudo python /home/pi/WeatherClock/turn_off_LED_array.py")
+    os.system("{}/{} {}".format(kill_script, weather_clock_filename))
     time.sleep(1)
     os.system("sudo poweroff")
 
