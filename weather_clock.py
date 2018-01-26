@@ -34,22 +34,13 @@ from neopixel import *
 from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, \
                    ACTIVE_LEDS
-"""
-import wiringpi
-# import RPi.GPIO as GPIO ?
-# I2C ?
-"""
 
 
-#####  CONSTANTS  #####
-#api_key = "0bd8f5fb32262aa45c4598c2f1ef5b44"
-#lat = 39.9936
-#lng = -105.0897
+#===============================================================================
+#--------------------------------- CONSTANTS -----------------------------------
+#===============================================================================
 
-# Refresh rate
-# GPIO pins...
-
-# COLORS
+#----------------------------------- colors ------------------------------------
 #red             =   (255, 0, 0)
 #magenta         =   (255, 0, 255)
 #orange          =   (200, 50, 0)
@@ -89,22 +80,14 @@ gray_blue       =   (50, 50, 150)
 light_gray      =   (100, 100, 100)
 gray            =   (80, 80, 80)
 
-number_of_hours = 12
-number_of_LEDs  = 24
+#------------------------------- other options ---------------------------------
+NUMBER_OF_HOURS = 12
 cursor_color    = red
 
 
-def signal_handler(signum, frame):
-    # (Show the cursor again)
-    os.system('echo "\x1b[?25h"')
-    os.system('tput sgr0')
-    sys.exit()
-    
-signal.signal(signal.SIGINT, signal_handler)
-
-
-
-#####  CLASSES  #####
+#===============================================================================
+#---------------------------------- CLASSES ------------------------------------
+#===============================================================================
 
 class Numpy(object):
     """
@@ -268,7 +251,7 @@ class Parser(object):
         current_time = int( str(today)[11:13] )
         self.clock_12 = {}
         self.next_12 = []
-        for i in range(number_of_hours):
+        for i in range(NUMBER_OF_HOURS):
             hour = '{:02d}'.format(current_time + i)
             hour_12 = '{:02d}'.format(int(hour) % 12)
             if int(hour) <= 23:
@@ -395,7 +378,7 @@ class Sky(object):
         LedHandler.LED_status["cursor"]["RGB"]["dimmed"]     = cursor_now
         LedHandler.LED_status["cursor"]["RGB"]["adjusted"]   = cursor_now
 
-        for i in range(number_of_hours):
+        for i in range(NUMBER_OF_HOURS):
             # Get HOUR, summary, and icon for current LED
             this_hour   = next_12.pop(0)
             HOUR_24     = str(this_hour["time"])[11:13]
@@ -666,7 +649,7 @@ class LedHandler(object):
     def __init__(self):
         # Memory for certain data about each LED's state
         self.LED_status = {}
-        for i in range(number_of_hours):
+        for i in range(NUMBER_OF_HOURS):
             HOUR = '{:02d}'.format(i)
             self.LED_status[HOUR] = {}
             self.LED_status[HOUR]["RGB"] = {}
@@ -898,6 +881,9 @@ class LedHandler(object):
     
 
     #----------  COMPLEX METHODS  ----------#
+    def turn_off_all_LEDs(self):
+        for i in range(LED_COUNT):
+            self.setColorRGB(i, 0,0,0)
 
     def drift(self, HOUR, color1, color2, interval):
         RGB_now = self.LED_status[HOUR]["RGB"]["now"]
@@ -1132,10 +1118,9 @@ class UIHandler(object):
     pass
 
 
-
-
-#####  SETUP  #####
-
+#===============================================================================
+#----------------------------------- SETUP -------------------------------------
+#===============================================================================
 # Instantiate classes
 np = Numpy()
 Parser = Parser()
@@ -1143,21 +1128,20 @@ Temp = Temp(-20, 120)
 MotorHandler = MotorHandler()
 Sky = Sky()
 LedHandler = LedHandler()
-"""
-# Set up RPi GPIO pins
-GPIO.setmode(GPIO.BOARD)
-# Servomotor pins
-GPIO.setup(MOTOR_CTRL_1, GPIO.OUT)
-GPIO.setup(MOTOR_CTRL_2, GPIO.OUT)
-GPIO.setup(MOTOR_CTRL_3, GPIO.OUT)
-# LED controller pins
-GPIO.setup(LED_CTRL_1, GPIO.OUT)
-GPIO.setup(LED_CTRL_2, GPIO.OUT)
-"""
+
+#.................................................
+# register interrupt handler
+def signal_handler(signum, frame):
+    # set all LEDs to black (off)
+    LedHandler.turn_off_all_LEDs()
+    sys.exit()
+signal.signal(signal.SIGINT, signal_handler)
+#.................................................
 
 
-#####  MAIN  #####
-#-------------------------------------------------------------------------------
+#===============================================================================
+#------------------------------------ MAIN -------------------------------------
+#===============================================================================
 Parser.parseWeather()
 latency = 0.01
 
