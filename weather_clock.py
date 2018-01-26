@@ -1190,7 +1190,7 @@ signal.signal(signal.SIGINT, signal_handler)
 start_up_time = 5
 latency       = 0.01
 LedHandler.start_up(start_up_time, latency)
-print "done"
+print "done with startup LED show"
 
 
 #for item in Parser.next_12:
