@@ -11,6 +11,9 @@ if (whoami != root) then
     exit 1
 fi
 
+#----------------------------- RaspberryPi Setup -------------------------------
+sudo cat ./wpa_supplicant.txt > /etc/wpa_supplicant/wpa_supplicant.conf
+
 
 #------------------------------- Python Modules --------------------------------
 sudo apt-get install python-pip

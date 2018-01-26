@@ -1,0 +1,13 @@
+country=US
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+network={
+    ssid="HOME-52A7-2.4"
+    psk="collar6800bagel"
+    priority=1
+}
+network={
+    ssid="HOME-52A7-5"
+    psk="collar6800bagel"
+    priority=1
+}
