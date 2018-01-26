@@ -73,7 +73,7 @@ indigo          =   (70, 0, 255)
 violet          =   (100, 0, 255)
 light_yellow    =   (100, 100, 30)
 light_green     =   (75, 255, 75)
-dark_green      =   (0, 100, 0)
+dark_green      =   (0, 30, 0)
 light_blue      =   (100, 120, 255)
 dark_blue       =   (0, 0, 100)
 gray_blue       =   (50, 50, 150)
@@ -153,7 +153,18 @@ class Parser(object):
 
         # (next 12 hours)
         self.clock_12 = {}
-        self.next_12 = []
+        self.next_12  = []
+
+        # populate self.next_12
+        clock_item = { "icon"    : "",
+                       "summary" : "",
+                       "temp"    : 0,
+                       "time"    : "" }
+        for i in range(NUMBER_OF_HOURS):
+            next_item    = deepcopy(clock_item)
+            two_digit_hr = "{:0>2}".format(i)
+            next_item["time"] = "xxxx-xx-xx {}:00:00".format(two_digit_hr)
+            self.next_12.append(next_item)
 
         # Current conditions
         self.current = {}
@@ -288,6 +299,7 @@ class Sky(object):
         self.wind_list      = ["wind", "windy", "breezy", "gust", "gusts", "gusty"]
 
         # Static display colors (if desired)
+        self.start_up_static        = green
         self.clear_static           = yellow
         self.cloudy_static          = gray
         self.partly_cloudy_static   = light_yellow
@@ -296,7 +308,7 @@ class Sky(object):
         self.thunder_static         = violet
         self.wind_static            = cyan
         self.unknown_static         = red
-        self.cursor_static          = green
+        self.cursor_static          = cursor_color
 
     def determineWeather(self, HOUR, summary, icon):
         # Search summary string for key words
@@ -309,7 +321,10 @@ class Sky(object):
         
         weather_type = ''
         # search words in summary, and direct to sequencer
-        if wordsInSummary(self.clear_list, summary):
+        if wordsInSummary(["start_up"], summary):
+            weather_type = 'start_up'
+
+        elif wordsInSummary(self.clear_list, summary):
             weather_type = 'clear'
 
         elif wordsInSummary(self.thunder_list, summary):
@@ -403,7 +418,7 @@ class Sky(object):
                 icon        = "cursor"
                 self.setHour(HOUR_12, summary, icon, display_type)
             else:
-                LedHandler.setLEDBrightness(HOUR_12, 0.70**i)
+                #LedHandler.setLEDBrightness(HOUR_12, 0.70**i)
                 pass
 
             LedHandler.updateLED(HOUR_12)
@@ -417,11 +432,14 @@ class Sky(object):
         elif display_type == 'static':
             self.setHourStatic(HOUR, weather_type)
 
-        """LedHandler.updateLED(HOUR)"""
-
     def setHourUnique(self, HOUR, weather_type):
+        # start_up is a special light show, while starting up
+        if weather_type == 'start_up':
+            #RGB_final = LedHandler.LED_status["start_up"]["RGB"]["now"]
+            RGB_final = self.start_up(HOUR)
+
         # search words in summary, and direct to sequencer
-        if weather_type == 'clear':
+        elif weather_type == 'clear':
             RGB_final = self.clear(HOUR)
 
         elif weather_type == 'thunderstorm':
@@ -456,8 +474,12 @@ class Sky(object):
         LedHandler.LED_status[HOUR]["RGB"]["adjusted"]  = RGB_final
     
     def setHourUniform(self, HOUR, weather_type):
+        # start_up is a special light show, while starting up
+        if weather_type == 'start_up':
+            RGB_final = LedHandler.LED_status["start_up"]["RGB"]["now"]
+
         # search words in summary, and direct to sequencer
-        if weather_type == 'clear':
+        elif weather_type == 'clear':
             RGB_final = LedHandler.LED_status["clear"]["RGB"]["now"]
 
         elif weather_type == 'thunderstorm':
@@ -492,8 +514,13 @@ class Sky(object):
         LedHandler.LED_status[HOUR]["RGB"]["adjusted"]  = RGB_final
 
     def setHourStatic(self, HOUR, weather_type):
+        # start_up is a special light show, while starting up
+        if weather_type == 'start_up':
+            #RGB_final = LedHandler.LED_status["start_up"]["RGB"]["now"]
+            RGB_final = self.start_up
+
         # search words in summary, and direct to sequencer
-        if weather_type == 'clear':
+        elif weather_type == 'clear':
             RGB_final = self.clear_static
 
         elif weather_type == 'thunderstorm':
@@ -531,6 +558,7 @@ class Sky(object):
     #----------  WEATHER HELPER FUNCTIONS  ----------#
 
     def _uniformDisplay(self):
+        self.start_up("start_up")
         self.clear("clear")
         self.cloudy("cloudy")
         self.partlyCloudy("partly cloudy")
@@ -571,6 +599,21 @@ class Sky(object):
 
 
     #----------  WEATHER DISPLAY METHODS  ----------#
+
+    def start_up(self, HOUR):
+#        color1          = gray_blue
+#        color2          = light_blue
+#        time_constant   = 50
+#        fluxuation      = 0
+#
+#        LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+#        return 
+#
+        color1   = black
+        color2   = green
+        interval = 50
+
+        LedHandler.bounce(HOUR, color1, color2, interval)
 
     def clear(self, HOUR):
         color = yellow
@@ -669,6 +712,7 @@ class LedHandler(object):
             self.LED_status[HOUR]["lightning"]["intervals"]     = [1,1]
 
         # Memory for uniform shows
+        self.LED_status["start_up"]         = deepcopy(self.LED_status["00"])
         self.LED_status["clear"]            = deepcopy(self.LED_status["00"])
         self.LED_status["cloudy"]           = deepcopy(self.LED_status["00"])
         self.LED_status["partly cloudy"]    = deepcopy(self.LED_status["00"])
@@ -679,12 +723,6 @@ class LedHandler(object):
         self.LED_status["unknown"]          = deepcopy(self.LED_status["00"])
         self.LED_status["cursor"]           = deepcopy(self.LED_status["00"])
 
-        #LED_COUNT   = number_of_LEDs    # Number of LED NeoPixels
-        #LED_PIN     = 18                # GPIO pin (must support PWM)
-        #LED_FREQ_HZ = 800000            # LED signal frequency (usually 800khz)
-        #LED_DMA     = 5                 # DMA channel to use for generating signal
-        #LED_INVERT  = False             # True when using NPN transistor level shift
-        
         # Create NeoPixel object with appropriate configuration.
         self.strip = Adafruit_NeoPixel( LED_COUNT, LED_PIN, LED_FREQ_HZ,
                                         LED_DMA, LED_INVERT )
@@ -884,6 +922,16 @@ class LedHandler(object):
     def turn_off_all_LEDs(self):
         for i in range(LED_COUNT):
             self.setColorRGB(i, 0,0,0)
+
+    def start_up(self, start_up_time, latency):
+        for item in Parser.next_12:
+            item["summary"] = "start_up"
+
+        start = time.time()
+        while time.time() - start  < start_up_time:
+            Sky.set_12_Hours("uniform")
+            LedHandler.strip.show()
+            time.sleep(latency)
 
     def drift(self, HOUR, color1, color2, interval):
         RGB_now = self.LED_status[HOUR]["RGB"]["now"]
@@ -1142,15 +1190,20 @@ signal.signal(signal.SIGINT, signal_handler)
 #===============================================================================
 #------------------------------------ MAIN -------------------------------------
 #===============================================================================
-Parser.parseWeather()
-latency = 0.01
+# turn on LEDs right away
+start_up_time = 5
+latency       = 0.01
+LedHandler.start_up(start_up_time, latency)
+print "done"
+
 
 #for item in Parser.next_12:
+#    item["summary"] = "start_up"
 #    #item["summary"] = "clear"
 #    #item["summary"] = "cloudy"
 #    #item["summary"] = "partly cloudy"
 #    #item["summary"] = "light rain"
-#    item["summary"] = "thunderstorm"
+#    #item["summary"] = "thunderstorm"
 #    #item["summary"] = "snow"
 #    #item["summary"] = "wind"
 #    #item["summary"] = "unknown"
@@ -1162,6 +1215,9 @@ latency = 0.01
 #    time.sleep(latency)
 
 #-------------------------------------------------------------------------------
+# Get weather data and start displaying
+#Parser.parseWeather()
+
 while True:
     # Update weather data
     Parser.parseWeather()
