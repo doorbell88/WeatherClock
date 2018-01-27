@@ -420,7 +420,7 @@ class Sky(object):
                 icon        = "cursor"
                 self.setHour(HOUR_12, summary, icon, display_type)
             else:
-                LedHandler.setLEDBrightness(HOUR_12, 0.70**i)
+                LedHandler.setLEDBrightness(HOUR_12, 0.65**i)
                 pass
 
             LedHandler.updateLED(HOUR_12)
@@ -1189,7 +1189,7 @@ signal.signal(signal.SIGINT, signal_handler)
 #------------------------------------ MAIN -------------------------------------
 #===============================================================================
 # turn on LEDs right away
-start_up_time = 5
+start_up_time = 6.5
 latency       = 0.01
 LedHandler.start_up(start_up_time, latency)
 print "done with startup LED show"
