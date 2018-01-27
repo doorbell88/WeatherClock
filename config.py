@@ -32,13 +32,15 @@ LED_FREQ_HZ = 800000        # LED signal frequency (usually 800khz)
 LED_DMA     = 5             # DMA channel to use for generating signal
 LED_INVERT  = False         # True when using NPN transistor level shift
 
-ACTIVE_LEDS = 24            # (If you have 24 LEDs, but only want one lit up for
+ACTIVE_LEDS = 12            # (If you have 24 LEDs, but only want one lit up for
                             #  each hour, you would set ACTIVE_LEDS = 12)
                             #   --> Currently only works with 12 or 24 LEDs
 
 
 #------------------------------- OTHER HARDWARE --------------------------------
-BUTTON_PIN          = 23    # GPIO pin for button (other button contact = GND)
-BUTTON_HOLD_TIME    = 6     # Seconds to hold down button for shutoff
-STATUS_LED_PIN      = 16    # A simple status LED (if you have one).  Provides
-                            # feedback for button presses.
+BUTTON_PIN                = 23  # GPIO pin for button (2nd button contact = GND)
+BUTTON_HOLD_TIME_KILL     = 2   # Seconds to hold down button for shutoff
+BUTTON_HOLD_TIME_SHUTDOWN = 5   # Seconds to hold down button for shutoff
+
+STATUS_LED_PIN            = 16  # A simple status LED (if you have one).
+                                # Provides feedback for button presses.
