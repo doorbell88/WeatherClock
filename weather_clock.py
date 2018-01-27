@@ -1025,11 +1025,12 @@ class LedHandler(object):
                 LED_status["drift"]["direction"] = dimmest
                 LED_status["drift"]["status"] = True
                 RGB_final = brightest
+                #RGB_final = self.drift(HOUR, brightest, dimmest, up_interval)
 
         # If getting dimmer, drift dimmer
         elif tuple(LED_status["drift"]["direction"]) == tuple(dimmest):
 
-            # (randomly can do a multiple bolts in a single strike
+            # (randomly can do a multiple bolts in a single strike)
             if randint(1,20) == 1:
                 LED_status["lightning"]["status"] = "start"
                 entry_color = LED_status["RGB"]["now"]
@@ -1041,7 +1042,7 @@ class LedHandler(object):
             else:
                 LED_status["lightning"]["status"] = False
                 #RGB_final = dimmest
-                LED_status["drift"]["status"] == True
+                #LED_status["drift"]["status"] == True
                 RGB_final = self.drift(HOUR, brightest, dimmest, down_interval)
 
         else:
@@ -1195,22 +1196,22 @@ LedHandler.start_up(start_up_time, latency)
 print "done with startup LED show"
 
 
-#for item in Parser.next_12:
-#    item["summary"] = "start_up"
-#    #item["summary"] = "clear"
-#    #item["summary"] = "cloudy"
-#    #item["summary"] = "partly cloudy"
-#    #item["summary"] = "light rain"
-#    #item["summary"] = "thunderstorm"
-#    #item["summary"] = "snow"
-#    #item["summary"] = "wind"
-#    #item["summary"] = "unknown"
-#    #item["summary"] = "cursor"
-#
-#while True:
-#    Sky.set_12_Hours("uniform")
-#    LedHandler.strip.show()
-#    time.sleep(latency)
+for item in Parser.next_12:
+    #item["summary"] = "start_up"
+    #item["summary"] = "clear"
+    #item["summary"] = "cloudy"
+    #item["summary"] = "partly cloudy"
+    #item["summary"] = "light rain"
+    item["summary"] = "thunderstorm"
+    #item["summary"] = "snow"
+    #item["summary"] = "wind"
+    #item["summary"] = "unknown"
+    #item["summary"] = "cursor"
+
+while True:
+    Sky.set_12_Hours("uniform")
+    LedHandler.strip.show()
+    time.sleep(latency)
 
 #-------------------------------------------------------------------------------
 # Get weather data and start displaying
