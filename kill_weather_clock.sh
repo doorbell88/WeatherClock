@@ -7,7 +7,6 @@ weather_clock_pid=$(ps -ef | grep "weather_clock.py" | \
 # check to make sure it got a PID
 if [ -z "$weather_clock_pid" ]; then
     echo "The PID for weather_clock.py could not be found"
-    echo "exiting."
     exit 1
 fi
 
