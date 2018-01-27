@@ -160,9 +160,11 @@ class Parser(object):
                        "summary" : "",
                        "temp"    : 0,
                        "time"    : "" }
+        current_time = datetime.datetime.now().hour
         for i in range(NUMBER_OF_HOURS):
+            HOUR = int((current_time+i) % 12)
             next_item    = deepcopy(clock_item)
-            two_digit_hr = "{:0>2}".format(i)
+            two_digit_hr = "{:0>2}".format(HOUR)
             next_item["time"] = "xxxx-xx-xx {}:00:00".format(two_digit_hr)
             self.next_12.append(next_item)
 
@@ -418,7 +420,7 @@ class Sky(object):
                 icon        = "cursor"
                 self.setHour(HOUR_12, summary, icon, display_type)
             else:
-                #LedHandler.setLEDBrightness(HOUR_12, 0.70**i)
+                LedHandler.setLEDBrightness(HOUR_12, 0.70**i)
                 pass
 
             LedHandler.updateLED(HOUR_12)
