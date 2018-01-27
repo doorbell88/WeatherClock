@@ -7,7 +7,6 @@ from config import BUTTON_PIN, BUTTON_HOLD_TIME_KILL, BUTTON_HOLD_TIME_SHUTDOWN,
                    STATUS_LED_PIN
 
 #--------------------------------- VARIABLES -----------------------------------
-weather_clock_filename = "weather_clock.py"
 WeatherClock_dir       = "/home/pi/WeatherClock"
 kill_weather_clock_sh  = "kill_weather_clock.sh"
 kill_script            = "{}/{}".format(WeatherClock_dir, kill_weather_clock_sh)
@@ -23,10 +22,8 @@ def when_pressed():
     start = time.time()
     while time.time() - start < BUTTON_HOLD_TIME_KILL:
         pass
-
-    print "Killing weather_clock.py"
-    os.system("{} {}".format(kill_script, weather_clock_filename))
-    print "  --> Killed"
+    print "calling {}".format(kill_script)
+    os.system(kill_script)
 
 
 def when_released():
@@ -37,7 +34,6 @@ def when_released():
 
 def shutdown():
     print "SHUTTING OFF THE RASPBERRY PI NOW."
-    os.system("{} {}".format(kill_script, weather_clock_filename))
     time.sleep(1)
     os.system("sudo poweroff")
 
