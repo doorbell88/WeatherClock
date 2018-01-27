@@ -50,7 +50,6 @@ get_line_number "exit"
 insert_line "#-----------------------------------------------------------------"
 insert_line "# Scripts and commands used for WeatherClock"
 insert_line "#-----------------------------------------------------------------"
-insert_line '$(cd /home/pi/WeatherClock/ && git pull)'
 insert_line "/home/pi/WeatherClock/shutdown_switch.py &"
 insert_line "/home/pi/WeatherClock/weather_clock.py &"
 insert_line "#-----------------------------------------------------------------"
