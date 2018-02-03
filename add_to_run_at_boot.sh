@@ -31,7 +31,7 @@ insert_line() {
     fi
 
     # insert line
-    sed -i "${line_number}i ${content}" ${FILE}
+    grep -qF "${content}" ${FILE} || sed -i "${line_number}i ${content}" ${FILE}
     # increment $line_number
     line_number=$((line_number + 1))
 }
@@ -47,9 +47,9 @@ cp ${FILE}{,.bak}
 get_line_number "exit"
 
 # insert lines into file
-insert_line "#-----------------------------------------------------------------"
+insert_line "#================================================================="
 insert_line "# Scripts and commands used for WeatherClock"
-insert_line "#-----------------------------------------------------------------"
+insert_line "#................................................................."
 insert_line "/home/pi/WeatherClock/shutdown_switch.py &"
 insert_line "/home/pi/WeatherClock/weather_clock.py &"
 insert_line "#-----------------------------------------------------------------"
