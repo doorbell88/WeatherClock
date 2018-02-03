@@ -57,8 +57,8 @@ sudo "$WEATHERCLOCK_BASE_DIR/add_to_run_at_boot.sh"
 
 
 #----------------------- Run programs now in background ------------------------
-{ sudo python "$WEATHERCLOCK_BASE_DIR/weather_clock.py" & } &>/dev/null
-{ sudo python "$WEATHERCLOCK_BASE_DIR/shutdown_switch.py" & } &>/dev/null
+{ sudo python "$WEATHERCLOCK_BASE_DIR/weather_clock.py" >/dev/null 2>&1 & }
+{ sudo python "$WEATHERCLOCK_BASE_DIR/shutdown_switch.py" >/dev/null 2>&1 & }
 
 
 #------------------------------ NOTICES TO USER --------------------------------
