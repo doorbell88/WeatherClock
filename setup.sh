@@ -6,6 +6,7 @@
 
 # get the repo's base directory
 WEATHERCLOCK_BASE_DIR="$(git rev-parse --show-toplevel)"
+cd $WEATHERCLOCK_BASE_DIR
 
 #------------------------------- SETUP / CHECKS --------------------------------
 # Check if being run as root
@@ -22,7 +23,7 @@ WPA_SUPPLICANT_CONF="/etc/wpa_supplicant/wpa_supplicant.conf"
 WPA_SUPPLICANT_TXT="$WEATHERCLOCK_BASE_DIR/wpa_supplicant.txt"
 
 echo "Making a copy of your wpa_supplicant.conf file..."
-cp -v $WPA_SUPPLICANT_CONF{,.bak}
+cp -v ${WPA_SUPPLICANT_CONF} ${WPA_SUPPLICANT_CONF}.bak
 echo "Overwriting wpa_supplicant.conf with prepared contents"
 sudo cat "$WPA_SUPPLICANT_TXT" > "$WPA_SUPPLICANT_CONF"
 echo "Done with wpa_supplicant.  Please check for correct wifi network info."
@@ -40,6 +41,8 @@ pip install -r "$WEATHERCLOCK_BASE_DIR/requirements.txt"
 
 #------------------------------ WS2812 NeoPixel --------------------------------
 yes Y | sudo apt-get install build-essential python-dev scons swig
+
+cd $WEATHERCLOCK_BASE_DIR
 
 git clone https://github.com/jgarff/rpi_ws281x.git
 cd rpi_ws281x
@@ -62,7 +65,7 @@ sudo "$WEATHERCLOCK_BASE_DIR/add_to_run_at_boot.sh"
 tput setaf 3
 echo "========================================================================="
 echo "Setup complete."
-echo 
+echo
 echo "Make sure to configure the following:"
 echo "  (1) raspi-config:"
 echo "        - timezone"
