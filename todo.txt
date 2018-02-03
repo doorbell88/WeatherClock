@@ -1,12 +1,5 @@
-- Add shutoff switch
-
 - Run at boot:
-    - shutoff switch listener
-        --> vim /etc/rc.local
-            --> python ~/WeatherClock/shutdown_switch.py
-    - run weather clock
     - update date/time (NTP server)
-    - (git pull?)
 
 - Polish setup.sh
 
@@ -21,7 +14,11 @@
             defaults,noatime,nosuid,mode=0700,gid=12,size=30m   0 0
 
 
+CONFIG OPTIONS
+--------------
+- lightning bolts (on/off)
+- static - uniform - unique
+
 
 INSTALLING MODULES
 ------------------
-sudo pip install gpiozero
