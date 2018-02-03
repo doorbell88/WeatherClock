@@ -54,8 +54,8 @@ sudo "$WEATHERCLOCK_BASE_DIR/add_to_run_at_boot.sh"
 
 
 #----------------------- Run programs now in background ------------------------
-sudo python "$WEATHERCLOCK_BASE_DIR/weather_clock.py" &
-sudo python "$WEATHERCLOCK_BASE_DIR/shutdown_switch.py" &
+{ sudo python "$WEATHERCLOCK_BASE_DIR/weather_clock.py" & } &>/dev/null
+{ sudo python "$WEATHERCLOCK_BASE_DIR/shutdown_switch.py" & } &>/dev/null
 
 
 #------------------------------ NOTICES TO USER --------------------------------
@@ -72,6 +72,6 @@ echo "  (2) /etc/wpa_supplicant/wpa_supplicant.conf"
 echo "        - wifi networks and passwords"
 echo "  (3) Anything else you want to change in WeatherClock/config.py"
 echo
-tput setaf 2"
+tput setaf 2
 echo "PLEASE REBOOT WHEN YOU HAVE FINISHED SETUP."
 echo
