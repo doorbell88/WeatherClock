@@ -15,7 +15,7 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 #----------------------------- RaspberryPi Setup -------------------------------
-sudo apt-get update
+yes Y | sudo apt-get update
 
 # Set up wpa_supplicant (for wifi networks)
 WPA_SUPPLICANT_CONF="/etc/wpa_supplicant/wpa_supplicant.conf"
@@ -29,7 +29,7 @@ echo "Done with wpa_supplicant.  Please check for correct wifi network info."
 
 
 #------------------------------- Python Modules --------------------------------
-sudo apt-get install python-pip
+yes Y | sudo apt-get install python-pip
 
 pip install -r "$WEATHERCLOCK_BASE_DIR/requirements.txt"
 
@@ -39,15 +39,39 @@ pip install -r "$WEATHERCLOCK_BASE_DIR/requirements.txt"
 
 
 #------------------------------ WS2812 NeoPixel --------------------------------
-sudo apt-get install build-essential python-dev scons swig
+yes Y | sudo apt-get install build-essential python-dev scons swig
 
 git clone https://github.com/jgarff/rpi_ws281x.git
 cd rpi_ws281x
 scons
 
 cd python
-sudo python setup.py install
+yes Y | sudo python setup.py install
 
 
 #---------------------------- Run Programs at Boot -----------------------------
 sudo "$WEATHERCLOCK_BASE_DIR/add_to_run_at_boot.sh"
+
+
+#----------------------- Run programs now in background ------------------------
+sudo python "$WEATHERCLOCK_BASE_DIR/weather_clock.py" &
+sudo python "$WEATHERCLOCK_BASE_DIR/shutdown_switch.py" &
+
+
+#------------------------------ NOTICES TO USER --------------------------------
+tput setaf 3
+echo "========================================================================="
+echo "Setup complete."
+echo 
+echo "Make sure to configure the following:"
+echo "  (1) raspi-config:"
+echo "        - timezone"
+echo "        - hostname"
+echo "        - password"
+echo "  (2) /etc/wpa_supplicant/wpa_supplicant.conf"
+echo "        - wifi networks and passwords"
+echo "  (3) Anything else you want to change in WeatherClock/config.py"
+echo
+tput setaf 2"
+echo "PLEASE REBOOT WHEN YOU HAVE FINISHED SETUP."
+echo
