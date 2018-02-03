@@ -9,7 +9,7 @@ WEATHERCLOCK_BASE_DIR="$(git rev-parse --show-toplevel)"
 
 #------------------------------- SETUP / CHECKS --------------------------------
 # Check if being run as root
-if (whoami != root) then
+if [ "$(whoami)" != "root" ]; then
     echo "Please run as root"
     exit 1
 fi
