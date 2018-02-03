@@ -61,46 +61,31 @@ class Numpy(object):
     (Since numpy is very large, and it takes hours to install from scratch.)
     """
     def add(self, lst, x):
-        result = []
-        for i in range(len(lst)):
-            if type(x) == type(0) or type(x) == type(0.0):
-                result.append(lst[i] + x)
-            else:
-                result.append(lst[i] + x[i])
-        return result
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: i+x, lst)
+        else:
+            return map(lambda i,j: i+j, lst, x)
 
     def subtract(self, lst, x):
-        result = []
-        for i in range(len(lst)):
-            if type(x) == type(0) or type(x) == type(0.0):
-                result.append(lst[i] - x)
-            else:
-                result.append(lst[i] - x[i])
-        return result
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: i-x, lst)
+        else:
+            return map(lambda i,j: i-j, lst, x)
 
     def multiply(self, lst, x):
-        result = []
-        for i in range(len(lst)):
-            if type(x) == type(0) or type(x) == type(0.0):
-                result.append(lst[i] * x)
-            else:
-                result.append(lst[i] * x[i])
-        return result
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: i*x, lst)
+        else:
+            return map(lambda i,j: i*j, lst, x)
 
     def divide(self, lst, x):
-        result = []
-        for i in range(len(lst)):
-            if type(x) == type(0) or type(x) == type(0.0):
-                result.append(lst[i] / x)
-            else:
-                result.append(lst[i] / x[i])
-        return result
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: i/x, lst)
+        else:
+            return map(lambda i,j: i/j, lst, x)
 
     def abs(self, lst):
-        result = []
-        for i in list(lst):
-            result.append(abs(i))
-        return result
+        return map(lambda i: abs(i), lst)
 
 
 class Parser(object):
@@ -908,6 +893,10 @@ class LedHandler(object):
         self.LED_status[HOUR]["RGB"]["now"] = RGB_final
         self.LED_status[HOUR]["drift"]["status"] = True
 
+        # Check if current color is trying to drift to outside of range (0-255)
+        if filter(lambda x: x<0 or x>255, RGB_final):
+            self.LED_status[HOUR]["drift"]["status"] = False
+
         # Check if current color is outside of drift range
         dRGB1   = sum(np.abs(self._dRGB(color1, RGB_now)))      # d(now-to-1)
         d12     = sum(np.abs(self._dRGB(color1, color2)))       # d(1-to-2)
@@ -996,7 +985,7 @@ class LedHandler(object):
         # If getting dimmer, drift dimmer
         elif tuple(LED_status["drift"]["direction"]) == tuple(dimmest):
 
-            # (randomly can do a multiple bolts in a single strike)
+            # (randomly can do multiple bolts in a single strike)
             if randint(1,20) == 1:
                 LED_status["lightning"]["status"] = "start"
                 entry_color = LED_status["RGB"]["now"]
@@ -1007,14 +996,11 @@ class LedHandler(object):
                 RGB_final = self.drift(HOUR, brightest, dimmest, down_interval)
             else:
                 LED_status["lightning"]["status"] = False
-                #RGB_final = dimmest
-                #LED_status["drift"]["status"] == True
+                LED_status["drift"]["status"] == True
                 RGB_final = self.drift(HOUR, brightest, dimmest, down_interval)
 
         else:
             RGB_final = LED_status["RGB"]["now"]
-            LED_status["drift"]["direction"] = dimmest
-            LED_status["lightning"]["status"] = False
 
         LED_status["RGB"]["now"] = RGB_final
         return RGB_final
@@ -1161,7 +1147,8 @@ signal.signal(signal.SIGINT, signal_handler)
 start_up_time = 6.5
 latency       = 0.01
 #LedHandler.start_up(start_up_time, latency)
-print "done with startup LED show"
+#print "done with startup LED show"
+#time.sleep(1)
 
 
 for item in Parser.next_12:
