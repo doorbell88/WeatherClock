@@ -1155,9 +1155,9 @@ signal.signal(signal.SIGINT, signal_handler)
 # turn on LEDs right away
 start_up_time = 6.5
 latency       = 0.01
-#LedHandler.start_up(start_up_time, latency)
-#print "done with startup LED show"
-#time.sleep(1)
+LedHandler.start_up(start_up_time, latency)
+print "done with startup LED show"
+time.sleep(1)
 
 
 for item in Parser.next_12:
@@ -1177,7 +1177,7 @@ while True:
     LedHandler.strip.show()
     time.sleep(latency)
     os.system('clear')
-    print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
+    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
 #-------------------------------------------------------------------------------
 # Get weather data and start displaying
