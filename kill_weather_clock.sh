@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # get pid of weather clock process
-weather_clock_pid=$(ps -ef | grep "weather_clock.py" | \
-                    grep python | grep "root" | awk '{print $2}')
+weather_clock_pid=$(ps -ef | grep python | grep "weather_clock.py" | \
+                    grep "root" | grep -v sudo | \
+                    awk '{print $2}')
 
 # check to make sure it got a PID
 if [ -z "$weather_clock_pid" ]; then
