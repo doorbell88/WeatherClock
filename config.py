@@ -39,8 +39,9 @@ ACTIVE_LEDS = 12            # (If you have 24 LEDs, but only want one lit up for
 
 #------------------------------- OTHER HARDWARE --------------------------------
 BUTTON_PIN                = 23  # GPIO pin for button (2nd button contact = GND)
-BUTTON_HOLD_TIME_KILL     = 2   # Seconds to hold down button for shutoff
-BUTTON_HOLD_TIME_SHUTDOWN = 5   # Seconds to hold down button for shutoff
+BUTTON_HOLD_TIME_KILL     = 1   # Seconds to hold down button to kill Clock
+BUTTON_HOLD_TIME_REBOOT   = 3   # Seconds to hold down button for reboot
+BUTTON_HOLD_TIME_SHUTDOWN = 6   # Seconds to hold down button for shutoff
 
 STATUS_LED_PIN            = 16  # A simple status LED (if you have one).
                                 # Provides feedback for button presses.
