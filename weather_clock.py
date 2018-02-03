@@ -893,9 +893,18 @@ class LedHandler(object):
         self.LED_status[HOUR]["RGB"]["now"] = RGB_final
         self.LED_status[HOUR]["drift"]["status"] = True
 
+        #-------------------------------------------------------------------------------
+        #             CHECK THINGS THAT CAN CAUSE A STALL IN DRIFTING
+        #-------------------------------------------------------------------------------
         # Check if current color is trying to drift to outside of range (0-255)
         if filter(lambda x: x<0 or x>255, RGB_final):
             self.LED_status[HOUR]["drift"]["status"] = False
+            return RGB_final
+        # Check if current color can't drift because of the interval
+        if dRGB_dt == (0,0,0):
+            self.LED_status[HOUR]["drift"]["status"] = False
+            return RGB_final
+        #-------------------------------------------------------------------------------
 
         # Check if current color is outside of drift range
         dRGB1   = sum(np.abs(self._dRGB(color1, RGB_now)))      # d(now-to-1)
