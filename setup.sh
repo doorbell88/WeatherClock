@@ -75,6 +75,8 @@ echo "  (2) /etc/wpa_supplicant/wpa_supplicant.conf"
 echo "        - wifi networks and passwords"
 echo "  (3) Anything else you want to change in WeatherClock/config.py"
 echo
-tput setaf 2
+tput setaf 1
 echo "PLEASE REBOOT WHEN YOU HAVE FINISHED SETUP."
 echo
+
+exit
