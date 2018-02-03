@@ -1160,24 +1160,24 @@ print "done with startup LED show"
 time.sleep(1)
 
 
-for item in Parser.next_12:
-    #item["summary"] = "start_up"
-    #item["summary"] = "clear"
-    #item["summary"] = "cloudy"
-    #item["summary"] = "partly cloudy"
-    #item["summary"] = "light rain"
-    item["summary"] = "thunderstorm"
-    #item["summary"] = "snow"
-    #item["summary"] = "wind"
-    #item["summary"] = "unknown"
-    #item["summary"] = "cursor"
-
-while True:
-    Sky.set_12_Hours("uniform")
-    LedHandler.strip.show()
-    time.sleep(latency)
-    #os.system('clear')
-    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
+#for item in Parser.next_12:
+#    #item["summary"] = "start_up"
+#    #item["summary"] = "clear"
+#    #item["summary"] = "cloudy"
+#    #item["summary"] = "partly cloudy"
+#    #item["summary"] = "light rain"
+#    item["summary"] = "thunderstorm"
+#    #item["summary"] = "snow"
+#    #item["summary"] = "wind"
+#    #item["summary"] = "unknown"
+#    #item["summary"] = "cursor"
+#
+#while True:
+#    Sky.set_12_Hours("uniform")
+#    LedHandler.strip.show()
+#    time.sleep(latency)
+#    #os.system('clear')
+#    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
 #-------------------------------------------------------------------------------
 # Get weather data and start displaying
