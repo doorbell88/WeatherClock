@@ -1176,7 +1176,7 @@ while True:
     Sky.set_12_Hours("uniform")
     LedHandler.strip.show()
     time.sleep(latency)
-    os.system('clear')
+    #os.system('clear')
     #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
 #-------------------------------------------------------------------------------
