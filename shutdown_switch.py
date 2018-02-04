@@ -12,10 +12,12 @@ weather_clock_py       = "weather_clock.py"
 kill_weather_clock_sh  = "kill_weather_clock.sh"
 LED_shutdown_sequence  = "LED_shutdown_sequence.py"
 LED_reboot_sequence    = "LED_reboot_sequence.py"
+LED_strip              = "LED_strip.py"
 weather_clock_script   = "{}/{}".format(WeatherClock_dir, weather_clock_py)
 kill_script            = "{}/{}".format(WeatherClock_dir, kill_weather_clock_sh)
 LED_shutdown_script    = "{}/{}".format(WeatherClock_dir, LED_shutdown_sequence)
 LED_reboot_script      = "{}/{}".format(WeatherClock_dir, LED_reboot_sequence)
+LED_strip_script       = "{}/{}".format(WeatherClock_dir, LED_strip)
 
 
 stage = ""      # keeps track of what stage of a button hold you're in
@@ -40,6 +42,7 @@ def when_pressed():
                 stage = action
                 print "calling kill script --> ({})".format(kill_script)
                 os.system(kill_script)
+                os.system("sudo python {}".format(LED_strip_script))
 
         elif BUTTON_HOLD_TIME_REBOOT <= elapsed_time < BUTTON_HOLD_TIME_SHUTDOWN:
             action = "REBOOT" 
@@ -47,7 +50,6 @@ def when_pressed():
                 stage = action
                 print "STAGING FOR REBOOT"
                 os.system("sudo python {}".format(LED_reboot_script))
-                #reboot()
 
         elif (time.time() - start_time) >= BUTTON_HOLD_TIME_SHUTDOWN:
             action = "SHUTDOWN" 
