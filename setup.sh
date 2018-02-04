@@ -34,10 +34,6 @@ yes Y | sudo apt-get install python-pip
 
 pip install -r "$WEATHERCLOCK_BASE_DIR/requirements.txt"
 
-#pip install python-forecastio
-#pip install requests[security]
-#pip install gpiozero
-
 
 #------------------------------ WS2812 NeoPixel --------------------------------
 yes Y | sudo apt-get install build-essential python-dev scons swig
@@ -58,7 +54,7 @@ sudo "$WEATHERCLOCK_BASE_DIR/add_to_run_at_boot.sh"
 
 #----------------------- Run programs now in background ------------------------
 { sudo python "$WEATHERCLOCK_BASE_DIR/weather_clock.py" >/dev/null 2>&1 & }
-{ sudo python "$WEATHERCLOCK_BASE_DIR/shutdown_switch.py" >/dev/null 2>&1 & }
+{ sudo python "$WEATHERCLOCK_BASE_DIR/button_listener.py" >/dev/null 2>&1 & }
 
 
 #------------------------------ NOTICES TO USER --------------------------------

@@ -2,7 +2,7 @@
 
 #-------------------------------------------------------------------------------
 # Adds scripts to run at bootup.  Namely, adds the following to /etc/rc.local
-#   - shutdown_switch.py (to listen for a button press, and send a shutdown
+#   - button_listener.py (to listen for a button press, and send a shutdown
 #                         command so the RaspberryPi shuts down safely)
 #   - weather_clock.py   (to run the weather clock)
 #-------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ get_line_number "exit"
 insert_line "#================================================================="
 insert_line "# Scripts and commands used for WeatherClock"
 insert_line "#................................................................."
-insert_line "/home/pi/WeatherClock/shutdown_switch.py &"
+insert_line "/home/pi/WeatherClock/button_listener.py &"
 insert_line "/home/pi/WeatherClock/weather_clock.py &"
 insert_line "#-----------------------------------------------------------------"
 insert_line
