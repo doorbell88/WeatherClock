@@ -1185,7 +1185,7 @@ latency = 0.01          # time between updating LEDs (framerate)
 while True:
     # Update weather data on the minute every 2 minutes
     # (every minute would be 1440 API calls per day, but max for free is 1000)
-    if datetime.datetime.now().minute % 2 == 0
+    if datetime.datetime.now().minute % 2 == 0:
         Parser.parseWeather()
 
     # show LEDs
