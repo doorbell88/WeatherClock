@@ -1179,19 +1179,16 @@ time.sleep(1)
 #    #os.system('clear')
 #    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
-#-------------------------------------------------------------------------------
-# Get weather data and start displaying
-#Parser.parseWeather()
 
+#-------------------------------------------------------------------------------
+latency = 0.01          # time between updating LEDs (framerate)
 while True:
-    # Update weather data
-    Parser.parseWeather()
+    # Update weather data on the minute every 2 minutes
+    # (every minute would be 1440 API calls per day, but max for free is 1000)
+    if datetime.datetime.now().minute % 2 == 0
+        Parser.parseWeather()
 
     # show LEDs
-    t_a     = time.time()
-    period  = 60            # seconds between weather API calls
-    latency = 0.01
-    while time.time() - t_a < period:
-        Sky.set_12_Hours("uniform")
-        LedHandler.strip.show()
-        time.sleep(latency)
+    Sky.set_12_Hours("uniform")
+    LedHandler.strip.show()
+    time.sleep(latency)
