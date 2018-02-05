@@ -37,7 +37,8 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, \
                    NUMBER_OF_HOURS, ACTIVE_LEDS, CLOCK_BRIGHTNESS, \
                    DIM_BY_HOUR, DIM_BY_HOUR_VALUE, \
-                   CURSOR_COLOR_ERROR, CURSOR_COLOR
+                   CURSOR_COLOR, CURSOR_COLOR_API, CURSOR_COLOR_ERROR, \
+                   DISPLAY_TYPE, LATENCY
 
 
 #===============================================================================
@@ -50,7 +51,7 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
 
 #------------------------------- other options ---------------------------------
 NUMBER_OF_HOURS = 12
-cursor_color    = cyan
+cursor_color    = CURSOR_COLOR_API
 
 
 #===============================================================================
@@ -868,21 +869,25 @@ class LedHandler(object):
         color = RGB_adjusted
         self.setColor(HOUR, color)
     
+    def update_display(self):
+        Sky.set_12_Hours(DISPLAY_TYPE)
+        self.strip.show()
+        time.sleep(LATENCY)
+
 
     #----------  COMPLEX METHODS  ----------#
+
     def turn_off_all_LEDs(self):
         for i in range(LED_COUNT):
             self.setColorRGB(i, 0,0,0)
 
-    def start_up(self, start_up_time, latency):
+    def start_up(self, start_up_time):
         for item in Parser.next_12:
             item["summary"] = "start_up"
 
         start = time.time()
         while time.time() - start  < start_up_time:
-            Sky.set_12_Hours("uniform")
-            self.strip.show()
-            time.sleep(latency)
+            self.update_display()
 
     def drift(self, HOUR, color1, color2, interval):
         RGB_now = self.LED_status[HOUR]["RGB"]["now"]
@@ -1157,8 +1162,7 @@ signal.signal(signal.SIGINT, signal_handler)
 # turn on LEDs right away
 LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
 start_up_time = 6.5
-latency       = 0.01
-LedHandler.start_up(start_up_time, latency)
+LedHandler.start_up(start_up_time)
 print "done with startup LED show"
 time.sleep(1)
 
@@ -1176,15 +1180,12 @@ time.sleep(1)
 #    #item["summary"] = "cursor"
 #
 #while True:
-#    Sky.set_12_Hours("uniform")
-#    LedHandler.strip.show()
-#    time.sleep(latency)
+#    LedHandler.update_display()
 #    #os.system('clear')
 #    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
 
 #-------------------------------------------------------------------------------
-latency = 0.01          # time between updating LEDs (framerate)
 print "Beginning Weather Clock"
 
 while True:
@@ -1194,6 +1195,8 @@ while True:
     #   for free is 1000 per day. )
     try:
         print "Calling Dark Sky API..."
+        cursor_color = CURSOR_COLOR_API
+        LedHandler.update_display()
         Parser.parseWeather()
         print "weather parsed successfully"
     except Exception as e:
@@ -1213,6 +1216,4 @@ while True:
     while (datetime.datetime.now().minute % 5 != 0) and \
           (datetime.datetime.now().second != 0):
         # show LEDs
-        Sky.set_12_Hours("uniform")
-        LedHandler.strip.show()
-        time.sleep(latency)
+        LedHandler.update_display()

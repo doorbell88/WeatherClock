@@ -47,7 +47,11 @@ DIM_BY_HOUR_VALUE = 0.65    # (If DIM_BY_HOUR is True, dims each hour by this
                             #  amount successively.)
 
 CURSOR_COLOR       = magenta    # cursor color if weather is up-to-date
+CURSOR_COLOR_API   = cyan       # cursor color if weather is calling API
 CURSOR_COLOR_ERROR = red        # cursor color if weather API call fails
+
+DISPLAY_TYPE       = "uniform"  #  "static", "uniform", or "unique"
+LATENCY            = 0.01       # time between LED update (frame length)
 
 
 #------------------------------- OTHER HARDWARE --------------------------------
