@@ -1184,15 +1184,9 @@ time.sleep(1)
 #    #os.system('clear')
 #    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
+def update_weather_info():
+    global cursor_color
 
-#-------------------------------------------------------------------------------
-print "Beginning Weather Clock"
-
-while True:
-    #-------------------------------------------------------
-    # Update weather data on the minute every 5 minutes
-    # ( every minute would be 1440 API calls per day, but max
-    #   for free is 1000 per day. )
     try:
         print "Calling Dark Sky API..."
         cursor_color = CURSOR_COLOR_API
@@ -1211,9 +1205,19 @@ while True:
     finally:
         time.sleep(1)
 
+#-------------------------------------------------------------------------------
+print "Beginning Weather Clock"
+update_weather_info()
+
+while True:
+    #-------------------------------------------------------
+    # Update weather data on the minute every 5 minutes
+    # ( every minute would be 1440 API calls per day, but max
+    #   for free is 1000 per day. )
+    if (datetime.datetime.now().minute % 5 == 0) and \
+       (datetime.datetime.now().second == 0):
+        update_weather_info()
+
     #-------------------------------------------------------
     # Run LED shows until time to update weather data occurs
-    while (datetime.datetime.now().minute % 5 != 0) and \
-          (datetime.datetime.now().second != 0):
-        # show LEDs
-        LedHandler.update_display()
+    LedHandler.update_display()
