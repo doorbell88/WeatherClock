@@ -35,7 +35,7 @@ from neopixel import *
 
 from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, \
-                   ACTIVE_LEDS
+                   ACTIVE_LEDS, CLOCK_BRIGHTNESS, DIM_BY_HOUR, DIM_BY_HOUR_VALUE
 
 
 #===============================================================================
@@ -364,14 +364,14 @@ class Sky(object):
             LED_status["RGB"]["dimmed"]     = RGB_now
             LED_status["RGB"]["adjusted"]   = RGB_now
 
-            # Dim each hour after current a little more
             if i == 0:
                 #LedHandler.setLEDBrightness(HOUR_12, 0)
                 summary     = "cursor"
                 icon        = "cursor"
                 self.setHour(HOUR_12, summary, icon, display_type)
-            else:
-                LedHandler.setLEDBrightness(HOUR_12, 0.65**i)
+            # Dim each hour after current a little more
+            elif DIM_BY_HOUR:
+                LedHandler.setLEDBrightness(HOUR_12, DIM_BY_HOUR_VALUE**i)
                 pass
 
             LedHandler.updateLED(HOUR_12)
@@ -879,7 +879,7 @@ class LedHandler(object):
         start = time.time()
         while time.time() - start  < start_up_time:
             Sky.set_12_Hours("uniform")
-            LedHandler.strip.show()
+            self.strip.show()
             time.sleep(latency)
 
     def drift(self, HOUR, color1, color2, interval):
@@ -1153,6 +1153,7 @@ signal.signal(signal.SIGINT, signal_handler)
 #------------------------------------ MAIN -------------------------------------
 #===============================================================================
 # turn on LEDs right away
+LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
 start_up_time = 6.5
 latency       = 0.01
 LedHandler.start_up(start_up_time, latency)
