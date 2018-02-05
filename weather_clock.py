@@ -35,7 +35,9 @@ from neopixel import *
 
 from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, \
-                   ACTIVE_LEDS, CLOCK_BRIGHTNESS, DIM_BY_HOUR, DIM_BY_HOUR_VALUE
+                   NUMBER_OF_HOURS, ACTIVE_LEDS, CLOCK_BRIGHTNESS, \
+                   DIM_BY_HOUR, DIM_BY_HOUR_VALUE, \
+                   CURSOR_COLOR_ERROR, CURSOR_COLOR
 
 
 #===============================================================================
@@ -48,7 +50,7 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
 
 #------------------------------- other options ---------------------------------
 NUMBER_OF_HOURS = 12
-cursor_color    = red
+cursor_color    = cyan
 
 
 #===============================================================================
@@ -1183,13 +1185,34 @@ time.sleep(1)
 
 #-------------------------------------------------------------------------------
 latency = 0.01          # time between updating LEDs (framerate)
-while True:
-    # Update weather data on the minute every 2 minutes
-    # (every minute would be 1440 API calls per day, but max for free is 1000)
-    if datetime.datetime.now().minute % 2 == 0:
-        Parser.parseWeather()
+print "Beginning Weather Clock"
 
-    # show LEDs
-    Sky.set_12_Hours("uniform")
-    LedHandler.strip.show()
-    time.sleep(latency)
+while True:
+    #-------------------------------------------------------
+    # Update weather data on the minute every 5 minutes
+    # ( every minute would be 1440 API calls per day, but max
+    #   for free is 1000 per day. )
+    try:
+        print "Calling Dark Sky API..."
+        Parser.parseWeather()
+        print "weather parsed successfully"
+    except Exception as e:
+        cursor_color = CURSOR_COLOR_ERROR
+        print "ERROR:  Weather API call failed."
+        print e
+    except:
+        cursor_color = CURSOR_COLOR_ERROR
+        print "ERROR OCCURRED WHILE CALLING OR PARSING WEATHER."
+    else:
+        cursor_color = CURSOR_COLOR
+    finally:
+        time.sleep(1)
+
+    #-------------------------------------------------------
+    # Run LED shows until time to update weather data occurs
+    while (datetime.datetime.now().minute % 5 != 0) and \
+          (datetime.datetime.now().second != 0):
+        # show LEDs
+        Sky.set_12_Hours("uniform")
+        LedHandler.strip.show()
+        time.sleep(latency)

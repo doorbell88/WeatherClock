@@ -18,6 +18,7 @@
 # NOTE: All Pin numbers refer to the RPi's GPIO pin number, (which is different
 #       from the physical pin number)!
 
+from colors import *
 
 #--------------------------- WEATHER & LOCALIZATION ----------------------------
 LATITUDE            = 39.9936
@@ -32,14 +33,21 @@ LED_FREQ_HZ = 800000        # LED signal frequency (usually 800khz)
 LED_DMA     = 5             # DMA channel to use for generating signal
 LED_INVERT  = False         # True when using NPN transistor level shift
 
-ACTIVE_LEDS = 12            # (If you have 24 LEDs, but only want one lit up for
+NUMBER_OF_HOURS = 12        # Number of hours displayed in the clock
+
+ACTIVE_LEDS     = 12        # (If you have 24 LEDs, but only want one lit up for
                             #  each hour, you would set ACTIVE_LEDS = 12)
                             #   --> Currently only works with 12 or 24 LEDs
 
+
+#------------------------------- CUSTOMIZATION ---------------------------------
 CLOCK_BRIGHTNESS  = 20      # Overall brightness of the clock (0-255)
 DIM_BY_HOUR       = False   # If True, each hour after current hour dims
 DIM_BY_HOUR_VALUE = 0.65    # (If DIM_BY_HOUR is True, dims each hour by this
                             #  amount successively.)
+
+CURSOR_COLOR       = magenta    # cursor color if weather is up-to-date
+CURSOR_COLOR_ERROR = red        # cursor color if weather API call fails
 
 
 #------------------------------- OTHER HARDWARE --------------------------------
