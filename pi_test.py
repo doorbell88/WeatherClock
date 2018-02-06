@@ -15,8 +15,20 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT)
 # Intialize the library (must be called once before other functions).
 strip.begin()
 
-color = (10, 10, 0)
+color = orange
+brightness = 24
 
+dimmest_divisor    = reduce(lambda i,j: min(i,j), filter(lambda x: x>0, color))
+dimmest_decimal    = 1.0/dimmest_divisor
+dimmest_brightness = 255/dimmest_divisor
+
+print "  {} / {}...".format(color, dimmest_divisor)
+print "  dimmest brightness: {}".format(dimmest_brightness)
+print "  dimmest decimal: {}".format(dimmest_decimal)
+print "  {}".format(tuple( map(lambda x: x/dimmest_divisor, color) ))
+
+
+strip.setBrightness(dimmest_brightness)
 for i in range(LED_COUNT):
     strip.setPixelColor(i, Color(color[1], color[0], color[2]) )
 strip.show()

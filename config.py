@@ -41,8 +41,8 @@ ACTIVE_LEDS     = 12        # (If you have 24 LEDs, but only want one lit up for
 
 
 #------------------------------- CUSTOMIZATION ---------------------------------
-CLOCK_BRIGHTNESS  = 20      # Overall brightness of the clock (0-255)
-DIM_BY_HOUR       = False   # If True, each hour after current hour dims
+CLOCK_BRIGHTNESS  = 255     # Overall brightness of the clock (0-255)
+DIM_BY_HOUR       = True    # If True, each hour after current hour dims
 DIM_BY_HOUR_VALUE = 0.65    # (If DIM_BY_HOUR is True, dims each hour by this
                             #  amount successively.)
 
