@@ -1215,7 +1215,7 @@ while True:
     # Update weather data on the minute every 5 minutes
     # ( every minute would be 1440 API calls per day, but max
     #   for free is 1000 per day. )
-    if (datetime.datetime.now().minute % 5 == 0) and \
+    if (datetime.datetime.now().minute % 10 == 0) and \
        (datetime.datetime.now().second == 0):
 
        # if at the start of the hour, update the cursor to current hour
