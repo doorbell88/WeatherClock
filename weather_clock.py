@@ -169,16 +169,17 @@ class Parser(object):
         self.current["summary"] = summary
         return temp, summary
 
-    def parseWeather(self):
+    def parseWeather(self, API_update=True):
         # Set time points
         today = datetime.datetime.now()
         tomorrow = today + datetime.timedelta(days=1)
         yesterday = today + datetime.timedelta(days=-1)
 
-        # Find weather (7am - 6am next day)
-        self.today_weather = self.getWeather(today)
-        self.tomorrow_weather = self.getWeather(tomorrow)
-        self.yesterday_weather = self.getWeather(yesterday)
+        if API_update:
+            # Find weather (7am - 6am next day)
+            self.today_weather = self.getWeather(today)
+            self.tomorrow_weather = self.getWeather(tomorrow)
+            self.yesterday_weather = self.getWeather(yesterday)
 
         unknown_hour_dict = {"time": "", "temp": "", "summary": "", "icon": ""}
 
@@ -1216,6 +1217,13 @@ while True:
     #   for free is 1000 per day. )
     if (datetime.datetime.now().minute % 5 == 0) and \
        (datetime.datetime.now().second == 0):
+
+       # if at the start of the hour, update the cursor to current hour
+        if datetime.datetime.now().minute == 0:
+            Parser.parseWeather(API_update=False)
+            LedHandler.update_display()
+
+        # try calling Dark Sky API for updated weather info
         update_weather_info()
 
     #-------------------------------------------------------
