@@ -731,13 +731,17 @@ class LedHandler(object):
         RGB_dimmed = (int(r), int(g), int(b))
         return RGB_dimmed
 
-    def dim_carefully(self, color, decimal):
+    def dim_carefully_keep_hue(self, color, decimal):
         positive_values = filter(lambda x: x>0, color)
         if not positive_values:
             return color
         dimmest_divisor = reduce(lambda i,j: min(i,j), positive_values)
         dimmest_decimal = 1.0/dimmest_divisor
         RGB_dimmed = self.dim(color, max(dimmest_decimal, decimal) )
+        return RGB_dimmed
+
+    def dim_carefully_keep_brightness(self, color, decimal):
+        RGB_dimmed = tuple( map(lambda x: int(x*decimal) or (x and 1), color) )
         return RGB_dimmed
 
 
@@ -861,7 +865,7 @@ class LedHandler(object):
     
     def setLEDBrightness(self, HOUR, brightness):
         RGB_now = self.LED_status[HOUR]["RGB"]["now"]
-        RGB_dimmed = self.dim_carefully(RGB_now, brightness)
+        RGB_dimmed = self.dim_carefully_keep_brightness(RGB_now, brightness)
         self.LED_status[HOUR]["RGB"]["dimmed"]   = RGB_dimmed
         self.LED_status[HOUR]["RGB"]["adjusted"] = RGB_dimmed
         return RGB_dimmed
