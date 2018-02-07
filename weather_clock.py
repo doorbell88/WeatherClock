@@ -38,7 +38,8 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    NUMBER_OF_HOURS, ACTIVE_LEDS, CLOCK_BRIGHTNESS, \
                    DIM_BY_HOUR, DIM_BY_HOUR_VALUE, \
                    CURSOR_COLOR, CURSOR_COLOR_API, CURSOR_COLOR_ERROR, \
-                   DISPLAY_TYPE, LATENCY
+                   DISPLAY_TYPE, LATENCY, \
+                   SLEEP_AT_NIGHT, SLEEP_START, SLEEP_STOP
 
 
 #===============================================================================

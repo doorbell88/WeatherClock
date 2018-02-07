@@ -41,17 +41,21 @@ ACTIVE_LEDS     = 12        # (If you have 24 LEDs, but only want one lit up for
 
 
 #------------------------------- CUSTOMIZATION ---------------------------------
-CLOCK_BRIGHTNESS  = 255     # Overall brightness of the clock (0-255)
-DIM_BY_HOUR       = True    # If True, each hour after current hour dims
-DIM_BY_HOUR_VALUE = 0.65    # (If DIM_BY_HOUR is True, dims each hour by this
+CLOCK_BRIGHTNESS  = 5       # Overall brightness of the clock (0-255)
+DIM_BY_HOUR       = False   # If True, each hour after current hour dims
+DIM_BY_HOUR_VALUE = 0.50    # (If DIM_BY_HOUR is True, dims each hour by this
                             #  amount successively.)
 
-CURSOR_COLOR       = magenta    # cursor color if weather is up-to-date
+CURSOR_COLOR       = black      # cursor color if weather is up-to-date
 CURSOR_COLOR_API   = cyan       # cursor color if weather is calling API
 CURSOR_COLOR_ERROR = red        # cursor color if weather API call fails
 
 DISPLAY_TYPE       = "uniform"  #  "static", "uniform", or "unique"
 LATENCY            = 0.01       # time between LED update (frame length)
+
+SLEEP_AT_NIGHT     = True       # If True clock doesn't light during sleep hours
+SLEEP_START        = '22:00'    # Time to sleep clock (24-hr format - 'HH:MM')
+SLEEP_STOP         = '6:30'     # Time to wake clock up (24-hr format - 'HH:MM')
 
 
 #------------------------------- OTHER HARDWARE --------------------------------
