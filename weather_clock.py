@@ -1172,32 +1172,26 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 #===============================================================================
-#------------------------------------ MAIN -------------------------------------
+#--------------------------------- FUNCTIONS -----------------------------------
 #===============================================================================
-# turn on LEDs right away
-LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
-start_up_time = 6.5
-LedHandler.start_up(start_up_time)
-print "done with startup LED show"
-time.sleep(1)
-
-
-#for item in Parser.next_12:
-#    #item["summary"] = "start_up"
-#    #item["summary"] = "clear"
-#    #item["summary"] = "cloudy"
-#    #item["summary"] = "partly cloudy"
-#    #item["summary"] = "light rain"
-#    item["summary"] = "thunderstorm"
-#    #item["summary"] = "snow"
-#    #item["summary"] = "wind"
-#    #item["summary"] = "unknown"
-#    #item["summary"] = "cursor"
-#
-#while True:
-#    LedHandler.update_display()
-#    #os.system('clear')
-#    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
+def sleep_now():
+    if SLEEP_AT_NIGHT:
+        now = datetime.datetime.now().time()
+        try:
+            fmt   = "%I:%M%p"
+            sleep = datetime.datetime.strptime(SLEEP_START, fmt).time()
+            wake  = datetime.datetime.strptime(SLEEP_STOP, fmt).time()
+        except ValueError:
+            fmt   = "%H:%M"
+            sleep = datetime.datetime.strptime(SLEEP_START, fmt).time()
+            wake  = datetime.datetime.strptime(SLEEP_STOP, fmt).time()
+        except Exception as e:
+            print e
+            return False
+        finally:
+            return ((now >= sleep) or (now <= wake))
+    else:
+        return False
 
 def update_weather_info():
     global cursor_color
@@ -1220,11 +1214,50 @@ def update_weather_info():
     finally:
         time.sleep(1)
 
+
+#===============================================================================
+#------------------------------------ MAIN -------------------------------------
+#===============================================================================
+#for item in Parser.next_12:
+#    #item["summary"] = "start_up"
+#    #item["summary"] = "clear"
+#    #item["summary"] = "cloudy"
+#    #item["summary"] = "partly cloudy"
+#    #item["summary"] = "light rain"
+#    item["summary"] = "thunderstorm"
+#    #item["summary"] = "snow"
+#    #item["summary"] = "wind"
+#    #item["summary"] = "unknown"
+#    #item["summary"] = "cursor"
+#
+#while True:
+#    LedHandler.update_display()
+#    #os.system('clear')
+#    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
+
 #-------------------------------------------------------------------------------
+# Turn on LEDs right away
+print "startup LED show"
+LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
+start_up_time = 6.5
+LedHandler.start_up(start_up_time)
+print "done with startup LED show"
+time.sleep(1)
+
+
+# Get initial weather data
 print "Beginning Weather Clock"
 update_weather_info()
 
 while True:
+    # if sleep is set, and it is during sleep hours, then set to black and wait
+    if sleep_now():
+        LedHandler.setClockBrightness(0)
+        LedHandler.update_display()
+        continue
+    else:
+        LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
+
     #-------------------------------------------------------
     # Update weather data on the minute every 5 minutes
     # ( every minute would be 1440 API calls per day, but max
