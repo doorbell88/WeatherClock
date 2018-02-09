@@ -571,7 +571,7 @@ class Sky(object):
         LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         
     def partlyCloudy(self, HOUR):
-        color1          = yellow
+        color1          = gray
         color2          = light_yellow
         time_constant   = 30
         fluxuation      = 10
@@ -1224,16 +1224,15 @@ def update_weather_info():
 #    #item["summary"] = "cloudy"
 #    #item["summary"] = "partly cloudy"
 #    #item["summary"] = "light rain"
-#    item["summary"] = "thunderstorm"
-#    #item["summary"] = "snow"
+#    #item["summary"] = "thunderstorm"
+#    item["summary"] = "snow"
 #    #item["summary"] = "wind"
 #    #item["summary"] = "unknown"
 #    #item["summary"] = "cursor"
 #
+#LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
 #while True:
 #    LedHandler.update_display()
-#    #os.system('clear')
-#    #print json.dumps(LedHandler.LED_status['thunderstorm'], sort_keys=True, indent=4)
 
 #-------------------------------------------------------------------------------
 # Turn on LEDs right away
