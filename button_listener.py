@@ -66,7 +66,8 @@ def when_released():
     print "released"
 
     if not stage:
-        start_weather_clock()
+        #start_weather_clock()
+        toggle_weather_clock()
 
     elif ("REBOOT" in stage) and ("SHUTDOWN" not in stage):
         reboot()
@@ -78,6 +79,17 @@ def when_released():
     # reset list of actions done
     stage = ""
 
+
+def toggle_weather_clock():
+    exit_status = os.WEXITSTATUS(os.system(kill_script))
+
+    #if successfull, then the weather clock was just killed
+    if exit_status == 0:
+        return
+
+    # if unsuccessful, there was no weather clock process --> start one
+    elif exit_status == 1:
+        start_weather_clock()
 
 def start_weather_clock():
     os.system(kill_script)
