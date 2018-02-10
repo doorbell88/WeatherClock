@@ -380,7 +380,8 @@ class Sky(object):
                 summary     = "cursor"
                 icon        = "cursor"
                 self.setHour(HOUR_12, summary, icon, display_type)
-                LedHandler.setLEDBrightness(HOUR_12, MINUTE_CURSOR_DIM)
+                if not DIM_BY_HOUR:
+                    LedHandler.setLEDBrightness(HOUR_12, MINUTE_CURSOR_DIM)
             # Dim each hour after current a little more
             elif DIM_BY_HOUR:
                 LedHandler.setLEDBrightness(HOUR_12, DIM_BY_HOUR_VALUE**i)
