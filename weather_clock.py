@@ -23,7 +23,6 @@ import datetime
 import time
 import os
 import sys
-import re
 import signal
 #import numpy as np
 from random import randint, choice
@@ -318,19 +317,19 @@ class Sky(object):
         # (the icons don't change, but the summaries may change a lot)
         else:
             # Check icons
-            if re.search('clear', icon) is not None:
+            if 'clear' in icon:
                 weather_type = 'clear'
-            elif re.search('cloud', icon) is not None:
+            elif 'cloud' in icon:
                 RGB_final = self.cloudy(HOUR)
-            elif re.search('fog', icon) is not None:
+            elif 'fog' in icon:
                 weather_type = 'cloudy'
-            elif re.search('snow', icon) is not None:
+            elif 'snow' in icon:
                 weather_type = 'snow'
-            elif re.search('sleet', icon) is not None:
+            elif 'sleet' in icon:
                 weather_type = 'snow'
-            elif re.search('rain', icon) is not None:
+            elif 'rain' in icon:
                 weather_type = 'rain'
-            elif re.search('wind', icon) is not None:
+            elif 'wind' in icon:
                 weather_type = 'wind'
             else:
                 weather_type = 'unknown'
