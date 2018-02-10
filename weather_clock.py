@@ -470,8 +470,7 @@ class Sky(object):
     def setHourStatic(self, HOUR, weather_type):
         # start_up is a special light show, while starting up
         if weather_type == 'start_up':
-            #RGB_final = LedHandler.LED_status["start_up"]["RGB"]["now"]
-            RGB_final = self.start_up
+            RGB_final = self.start_up(HOUR)
 
         # search words in summary, and direct to sequencer
         elif weather_type == 'clear':
@@ -499,6 +498,7 @@ class Sky(object):
             RGB_final = self.unknown_static
         
         elif weather_type == 'cursor':
+            self.cursor_static = cursor_color
             RGB_final = self.cursor_static
         
         else:
@@ -558,32 +558,34 @@ class Sky(object):
         color1   = black
         color2   = green
         interval = 50
-
-        LedHandler.bounce(HOUR, color1, color2, interval)
+        RGB_final = LedHandler.bounce(HOUR, color1, color2, interval)
+        return RGB_final
 
     def clear(self, HOUR):
         color = yellow
-
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        return RGB_final
         
     def partlyCloudy(self, HOUR):
         color1          = gray
         color2          = light_yellow
         time_constant   = 30
         fluxuation      = 10
-        LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+        RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+        return RGB_final
         
     def cloudy(self, HOUR):
         color = gray
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        return RGB_final
         
     def rain(self, HOUR):
         color1          = gray_blue
         color2          = light_blue
         time_constant   = 10
         fluxuation      = 5
-
-        LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+        RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+        return RGB_final
 
     def thunderstorm(self, HOUR):
         LED_status = LedHandler.LED_status[HOUR]
@@ -610,25 +612,30 @@ class Sky(object):
             RGB_final   = LedHandler.bounce(HOUR, dark_blue, indigo, interval)
             #RGB_final   = LedHandler.flicker(HOUR, violet, indigo, interval, fluxuation)
         
+        return RGB_final
+        
     def snow(self, HOUR):
         color1          = gray
         color2          = light_gray
         time_constant   = 6
         fluxuation      = 4
-
-        LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+        RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
+        return RGB_final
 
     def wind(self, HOUR):
         color           = green
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        return RGB_final
 
     def unknown(self, HOUR):
         color           = orange
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        return RGB_final
 
     def cursor(self, HOUR):
         color           = cursor_color
-        LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        return RGB_final
 
 
 class LedHandler(object):
