@@ -319,8 +319,8 @@ class Sky(object):
             # Check icons
             if 'clear' in icon:
                 weather_type = 'clear'
-            elif 'cloud' in icon:
-                RGB_final = self.cloudy(HOUR)
+            elif 'cloudy' in icon:
+                weather_type = 'cloudy'
             elif 'fog' in icon:
                 weather_type = 'cloudy'
             elif 'snow' in icon:
@@ -331,6 +331,8 @@ class Sky(object):
                 weather_type = 'rain'
             elif 'wind' in icon:
                 weather_type = 'wind'
+            elif 'cursor' in summary:
+                weather_type = 'cursor'
             else:
                 weather_type = 'unknown'
     
