@@ -287,11 +287,6 @@ class Sky(object):
         elif wordsInSummary(self.thunder_list, summary):
             weather_type = 'thunderstorm'
 
-        #elif wordsInSummary(self.rain_list, summary):
-        #    if wordsInSummary(["heavy"], summary):
-        #        weather_type = 'thunderstorm'
-        #    else:
-        #        weather_type = 'rain'
         elif wordsInSummary(self.rain_list, summary):
             if summary.lower() in ["heavy rain", "rain"]:
                 weather_type = 'thunderstorm'
