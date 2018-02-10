@@ -389,7 +389,6 @@ class Sky(object):
     def setHourUnique(self, HOUR, weather_type):
         # start_up is a special light show, while starting up
         if weather_type == 'start_up':
-            #RGB_final = LedHandler.LED_status["start_up"]["RGB"]["now"]
             RGB_final = self.start_up(HOUR)
 
         # search words in summary, and direct to sequencer
