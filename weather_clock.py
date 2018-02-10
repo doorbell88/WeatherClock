@@ -37,7 +37,7 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    NUMBER_OF_HOURS, ACTIVE_LEDS, CLOCK_BRIGHTNESS, \
                    DIM_BY_HOUR, DIM_BY_HOUR_VALUE, \
                    CURSOR_COLOR, CURSOR_COLOR_API, CURSOR_COLOR_ERROR, \
-                   DISPLAY_TYPE, LATENCY, \
+                   DISPLAY_MINUTE, MINUTE_CURSOR_DIM, DISPLAY_TYPE, LATENCY, \
                    SLEEP_AT_NIGHT, SLEEP_START, SLEEP_STOP
 
 
@@ -347,6 +347,11 @@ class Sky(object):
         LedHandler.LED_status["cursor"]["RGB"]["dimmed"]     = cursor_now
         LedHandler.LED_status["cursor"]["RGB"]["adjusted"]   = cursor_now
 
+        # for displaying the minute, if desired
+        hour_position   = int(next_12[0]["time"][11:13]) % 12
+        minute          = int(datetime.datetime.now().minute)
+        minute_position = (24 + (minute/5) - hour_position) % 12
+
         for i in range(NUMBER_OF_HOURS):
             # Get HOUR, summary, and icon for current LED
             this_hour   = next_12.pop(0)
@@ -370,6 +375,12 @@ class Sky(object):
                 summary     = "cursor"
                 icon        = "cursor"
                 self.setHour(HOUR_12, summary, icon, display_type)
+            elif DISPLAY_MINUTE and (i == minute_position):
+                #LedHandler.setLEDBrightness(HOUR_12, 0)
+                summary     = "cursor"
+                icon        = "cursor"
+                self.setHour(HOUR_12, summary, icon, display_type)
+                LedHandler.setLEDBrightness(HOUR_12, MINUTE_CURSOR_DIM)
             # Dim each hour after current a little more
             elif DIM_BY_HOUR:
                 LedHandler.setLEDBrightness(HOUR_12, DIM_BY_HOUR_VALUE**i)
