@@ -47,7 +47,7 @@ CURSOR_COLOR_ERROR = red        # cursor color if weather API call fails
 
 CLOCK_BRIGHTNESS  = 5       # Overall brightness of the clock (0-255)
 DIM_BY_HOUR       = False   # If True, each hour after current hour dims
-DIM_BY_HOUR_VALUE = 0.50    # (If DIM_BY_HOUR is True, dims each hour by this
+DIM_BY_HOUR_VALUE = 0.70    # (If DIM_BY_HOUR is True, dims each hour by this
                             #  amount successively.)
 
 SLEEP_AT_NIGHT = True       # If True clock doesn't light during sleep hours
