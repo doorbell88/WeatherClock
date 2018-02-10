@@ -68,3 +68,46 @@ BUTTON_HOLD_TIME_SHUTDOWN = 6   # Seconds to hold down button for shutoff
 
 STATUS_LED_PIN            = 16  # A simple status LED (if you have one).
                                 # Provides feedback for button presses.
+
+
+#---------------------------------- PROFILES -----------------------------------
+# Profiles with set characteristics, to make it easy to change the appearance
+# and functionality without having to change all the associated values
+#
+#    "disk"
+#    "dim disk"
+#    "faded disk"
+#    "clock"
+#    "dim clock"
+#    "faded clock"
+
+PROFILE = "dim clock"
+
+if PROFILE == "disk":
+    ACTIVE_LEDS                = LED_COUNT
+    CLOCK_BRIGHTNESS           = 255
+    DIM_BY_HOUR                = False
+elif PROFILE == "dim disk":
+    ACTIVE_LEDS                = LED_COUNT
+    CLOCK_BRIGHTNESS           = 5
+    DIM_BY_HOUR                = False
+elif PROFILE == "faded disk":
+    ACTIVE_LEDS                = LED_COUNT
+    CLOCK_BRIGHTNESS           = 255
+    DIM_BY_HOUR                = True
+    DIM_BY_HOUR_VALUE          = 0.70
+elif PROFILE == "clock":
+    ACTIVE_LEDS                = NUMBER_OF_HOURS
+    CLOCK_BRIGHTNESS           = 255
+    DIM_BY_HOUR                = False
+elif PROFILE == "dim clock":
+    ACTIVE_LEDS                = NUMBER_OF_HOURS
+    CLOCK_BRIGHTNESS           = 5
+    DIM_BY_HOUR                = False
+elif PROFILE == "faded clock":
+    ACTIVE_LEDS                = NUMBER_OF_HOURS
+    CLOCK_BRIGHTNESS           = 255
+    DIM_BY_HOUR                = True
+    DIM_BY_HOUR_VALUE          = 0.70
+else:
+    pass
