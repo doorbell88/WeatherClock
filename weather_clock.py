@@ -932,6 +932,10 @@ class LedHandler(object):
         #-------------------------------------------------------------------------------
         #             CHECK THINGS THAT CAN CAUSE A STALL IN DRIFTING
         #-------------------------------------------------------------------------------
+        # Check if current color and final color are the same
+        if RGB_now == RGB_final:
+            self.LED_status[HOUR]["drift"]["status"] = False
+            return RGB_final
         # Check if current color is trying to drift to outside of range (0-255)
         if filter(lambda x: x<0 or x>255, RGB_final):
             self.LED_status[HOUR]["drift"]["status"] = False
