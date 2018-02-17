@@ -944,6 +944,10 @@ class LedHandler(object):
         if dRGB_dt == (0,0,0):
             self.LED_status[HOUR]["drift"]["status"] = False
             return RGB_final
+        # Check if capRGB is causing a stall
+        if self.capRGB(RGB_final) == color2:
+            self.LED_status[HOUR]["drift"]["status"] = False
+            return RGB_final
         #-------------------------------------------------------------------------------
 
         # Check if current color is outside of drift range
@@ -1240,10 +1244,10 @@ def update_weather_info():
 #    #item["summary"] = "start_up"
 #    #item["summary"] = "clear"
 #    #item["summary"] = "cloudy"
-#    #item["summary"] = "partly cloudy"
+#    item["summary"] = "partly cloudy"
 #    #item["summary"] = "light rain"
 #    #item["summary"] = "thunderstorm"
-#    item["summary"] = "snow"
+#    #item["summary"] = "snow"
 #    #item["summary"] = "wind"
 #    #item["summary"] = "unknown"
 #    #item["summary"] = "cursor"
