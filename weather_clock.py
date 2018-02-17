@@ -568,7 +568,7 @@ class Sky(object):
     def start_up(self, HOUR):
         color1   = black
         color2   = green
-        interval = 50
+        interval = 30
         RGB_final = LedHandler.bounce(HOUR, color1, color2, interval)
         return RGB_final
 
@@ -915,7 +915,7 @@ class LedHandler(object):
             item["summary"] = "start_up"
 
         start = time.time()
-        while time.time() - start  < start_up_time:
+        while time.time() - start < start_up_time:
             self.update_display()
 
     def drift(self, HOUR, color1, color2, interval):
@@ -1260,7 +1260,7 @@ def update_weather_info():
 # Turn on LEDs right away
 print "startup LED show"
 LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
-start_up_time = 6.5
+start_up_time = 4
 LedHandler.start_up(start_up_time)
 print "done with startup LED show"
 time.sleep(1)
