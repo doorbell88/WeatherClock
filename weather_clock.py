@@ -945,7 +945,7 @@ class LedHandler(object):
             self.LED_status[HOUR]["drift"]["status"] = False
             return RGB_final
         # Check if capRGB is causing a stall
-        if self.capRGB(RGB_final) == color2:
+        if self.capRGB(RGB_final) != color2:
             self.LED_status[HOUR]["drift"]["status"] = False
             return RGB_final
         #-------------------------------------------------------------------------------
