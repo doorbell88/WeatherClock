@@ -977,7 +977,7 @@ class LedHandler(object):
                 self.drift(HOUR, color1, color2, interval)
             else:
                 self.LED_status[HOUR]["drift"]["status"]    = True
-                self.LED_status[HOUR]["drift"]["direction"] = tuple(color1)
+                #self.LED_status[HOUR]["drift"]["direction"] = tuple(color1)
                 self.drift(HOUR, color2, color1, interval)
         
         elif direction == color1:
@@ -985,7 +985,7 @@ class LedHandler(object):
                 self.drift(HOUR, color2, color1, interval)
             else:
                 self.LED_status[HOUR]["drift"]["status"]    = True
-                self.LED_status[HOUR]["drift"]["direction"] = tuple(color2)
+                #self.LED_status[HOUR]["drift"]["direction"] = tuple(color2)
                 self.drift(HOUR, color1, color2, interval)
 
         else:
