@@ -928,7 +928,7 @@ class LedHandler(object):
         # Drift initially, before checking end conditions
         if not self.LED_status[HOUR]["drift"]["status"]:
             self.LED_status[HOUR]["RGB"]["now"] = color1
-            self.LED_status[HOUR]["drift"]["status"] = max(dRGB_dt)
+            self.LED_status[HOUR]["drift"]["status"] = interval
         else:
             self.LED_status[HOUR]["drift"]["status"] -= 1
 
