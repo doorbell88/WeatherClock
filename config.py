@@ -57,7 +57,7 @@ SLEEP_START    = '9:00pm'   # Time to sleep clock (24-hr format - 'HH:MM')
 SLEEP_STOP     = '6:30am'   # Time to wake clock up (24-hr format - 'HH:MM')
 
 DISPLAY_TYPE   = "uniform"  #  "static", "uniform", or "unique"
-LATENCY        = 0.01       # time between LED update (frame length)
+LATENCY        = 0.035      # time between LED update (frame length)
 
 
 #------------------------------- OTHER HARDWARE --------------------------------

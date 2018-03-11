@@ -935,45 +935,24 @@ class LedHandler(object):
         RGB_final = tuple(np.add(RGB_now, dRGB_dt))
         self.LED_status[HOUR]["RGB"]["now"] = RGB_final
 
-        ##-------------------------------------------------------------------------------
-        ##             CHECK THINGS THAT CAN CAUSE A STALL IN DRIFTING
-        ##-------------------------------------------------------------------------------
-        ## Check if current color and final color are the same
-        #if RGB_now == RGB_final:
-        #    self.LED_status[HOUR]["drift"]["status"] = 0
-        #    return RGB_final
-        ## Check if current color is trying to drift to outside of range (0-255)
-        #if filter(lambda x: x<0 or x>255, RGB_final):
-        #    self.LED_status[HOUR]["drift"]["status"] = 0
-        #    return RGB_final
-        ## Check if current color can't drift because of the interval
-        #if dRGB_dt == (0,0,0):
-        #    self.LED_status[HOUR]["drift"]["status"] = 0
-        #    return RGB_final
-        ## Check if capRGB is causing a stall
-        #if self.capRGB(RGB_final) == color2:
-        #    self.LED_status[HOUR]["drift"]["status"] = 0
-        #    return RGB_final
-        ##-------------------------------------------------------------------------------
+        # Check if current color is outside of drift range
+        dRGB1   = sum(np.abs(self._dRGB(color1, RGB_now)))      # d(now-to-1)
+        d12     = sum(np.abs(self._dRGB(color1, color2)))       # d(1-to-2)
+        dRGB2   = sum(np.abs(self._dRGB(color2, RGB_now)))      # d(now-to-2)
+        # if RGB has passed color2, set RGB_now to color2 and stop drifting
+        if dRGB1 >= d12:
+            RGB_final = color2
+            self.LED_status[HOUR]["RGB"]["now"] = RGB_final
+            self.LED_status[HOUR]["drift"]["status"] = 0
+        # if RGB is outside of color1, set RGB_now to color1 and drift
+        elif dRGB2 > d12:
+            RGB_final = color1
+            self.LED_status[HOUR]["RGB"]["now"] = RGB_final
+            self.LED_status[HOUR]["drift"]["status"] = interval
 
-        ## Check if current color is outside of drift range
-        #dRGB1   = sum(np.abs(self._dRGB(color1, RGB_now)))      # d(now-to-1)
-        #d12     = sum(np.abs(self._dRGB(color1, color2)))       # d(1-to-2)
-        #dRGB2   = sum(np.abs(self._dRGB(color2, RGB_now)))      # d(now-to-2)
-        ## if RGB has passed color2, set RGB_now to color2 and stop drifting
-        #if dRGB1 >= d12:
-        #    RGB_final = color2
-        #    self.LED_status[HOUR]["RGB"]["now"] = RGB_final
-        #    self.LED_status[HOUR]["drift"]["status"] = 0
-        ## if RGB is outside of color1, set RGB_now to color1 and drift
-        #elif dRGB2 > d12:
-        #    RGB_final = color1
-        #    self.LED_status[HOUR]["RGB"]["now"] = RGB_final
-        #    #self.LED_status[HOUR]["drift"]["status"] = True
-
-        ## if drifting, decrement status
-        #if self.LED_status[HOUR]["drift"]["status"]:
-        #    self.LED_status[HOUR]["drift"]["status"] -= 1
+        # if drifting, decrement status
+        if self.LED_status[HOUR]["drift"]["status"]:
+            self.LED_status[HOUR]["drift"]["status"] -= 1
 
         return RGB_final
     
@@ -982,11 +961,6 @@ class LedHandler(object):
         direction   = self.LED_status[HOUR]["drift"]["direction"]
         status      = self.LED_status[HOUR]["drift"]["status"]
         
-        if HOUR == 'start_up':
-            print "-----------------"
-            print "RGB_now:   " + str(RGB_now)
-            print "direction: " + str(direction)
-            print status
         if direction == color2:
             if status:
                 self.drift(HOUR, color1, color2, interval)
