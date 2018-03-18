@@ -65,30 +65,30 @@ class Numpy(object):
     """
     def add(self, lst, x):
         if type(x) == type(0) or type(x) == type(0.0):
-            return map(lambda i: i+x, lst)
+            return map(lambda i: float(i)+x, lst)
         else:
-            return map(lambda i,j: i+j, lst, x)
+            return map(lambda i,j: float(i)+j, lst, x)
 
     def subtract(self, lst, x):
         if type(x) == type(0) or type(x) == type(0.0):
             return map(lambda i: i-x, lst)
         else:
-            return map(lambda i,j: i-j, lst, x)
+            return map(lambda i,j: float(i)-j, lst, x)
 
     def multiply(self, lst, x):
         if type(x) == type(0) or type(x) == type(0.0):
-            return map(lambda i: i*x, lst)
+            return map(lambda i: float(i)*x, lst)
         else:
-            return map(lambda i,j: i*j, lst, x)
+            return map(lambda i,j: float(i)*j, lst, x)
 
     def divide(self, lst, x):
         if type(x) == type(0) or type(x) == type(0.0):
-            return map(lambda i: i/x, lst)
+            return map(lambda i: float(i)/x, lst)
         else:
-            return map(lambda i,j: i/j, lst, x)
+            return map(lambda i,j: float(i)/j, lst, x)
 
     def abs(self, lst):
-        return map(lambda i: abs(i), lst)
+        return map(lambda i: abs(float(i)), lst)
 
 
 class Parser(object):
@@ -261,8 +261,8 @@ class Sky(object):
         self.cloudy_static          = gray
         self.partly_cloudy_static   = light_yellow
         self.snow_static            = white
-        self.rain_static            = light_blue
-        self.thunder_static         = violet
+        self.rain_static            = blue
+        self.thunder_static         = indigo
         self.wind_static            = cyan
         self.unknown_static         = red
         self.cursor_static          = cursor_color
@@ -544,8 +544,8 @@ class Sky(object):
         end_colors  = dim_whites + warm_colors + cool_colors
         
         # Lists of time intervals
-        up_intervals    = [5,7,10,15,20]
-        down_intervals  = [10,15,20,30]
+        up_intervals    = [10,15,20]
+        down_intervals  = [20,30,40]
         up_interval     = choice(up_intervals)
         down_interval   = choice(down_intervals)
         
@@ -568,7 +568,7 @@ class Sky(object):
     def start_up(self, HOUR):
         color1   = black
         color2   = green
-        interval = 30
+        interval = 50
         RGB_final = LedHandler.bounce(HOUR, color1, color2, interval)
         return RGB_final
 
@@ -580,7 +580,7 @@ class Sky(object):
     def partlyCloudy(self, HOUR):
         color1          = gray
         color2          = light_yellow
-        time_constant   = 30
+        time_constant   = 20
         fluxuation      = 10
         RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
         return RGB_final
@@ -591,9 +591,9 @@ class Sky(object):
         return RGB_final
         
     def rain(self, HOUR):
-        color1          = gray_blue
-        color2          = light_blue
-        time_constant   = 10
+        color1          = blue
+        color2          = dark_blue
+        time_constant   = 8
         fluxuation      = 5
         RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
         return RGB_final
@@ -618,7 +618,7 @@ class Sky(object):
     
         # Otherwise, bounce / flicker
         else:
-            interval    = 20
+            interval    = 40
             fluxuation  = 7
             RGB_final   = LedHandler.bounce(HOUR, dark_blue, indigo, interval)
             #RGB_final   = LedHandler.flicker(HOUR, violet, indigo, interval, fluxuation)
@@ -628,23 +628,23 @@ class Sky(object):
     def snow(self, HOUR):
         color1          = gray
         color2          = light_gray
-        time_constant   = 6
-        fluxuation      = 4
+        time_constant   = 8
+        fluxuation      = 5
         RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
         return RGB_final
 
     def wind(self, HOUR):
-        color           = green
+        color     = green
         RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         return RGB_final
 
     def unknown(self, HOUR):
-        color           = orange
+        color     = orange
         RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         return RGB_final
 
     def cursor(self, HOUR):
-        color           = cursor_color
+        color     = cursor_color
         RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         return RGB_final
 
@@ -660,9 +660,9 @@ class LedHandler(object):
             HOUR = '{:02d}'.format(i)
             self.LED_status[HOUR] = {}
             self.LED_status[HOUR]["RGB"] = {}
-            self.LED_status[HOUR]["RGB"]["now"]         = (0,0,0)
-            self.LED_status[HOUR]["RGB"]["dimmed"]      = (0,0,0)
-            self.LED_status[HOUR]["RGB"]["adjusted"]    = (0,0,0)
+            self.LED_status[HOUR]["RGB"]["now"]         = (0.,0.,0.)
+            self.LED_status[HOUR]["RGB"]["dimmed"]      = (0.,0.,0.)
+            self.LED_status[HOUR]["RGB"]["adjusted"]    = (0.,0.,0.)
 
             self.LED_status[HOUR]["drift"] = {}
             self.LED_status[HOUR]["drift"]["status"]    = 0
@@ -670,9 +670,9 @@ class LedHandler(object):
 
             self.LED_status[HOUR]["lightning"] = {}
             self.LED_status[HOUR]["lightning"]["status"]        = False
-            self.LED_status[HOUR]["lightning"]["entry_color"]   = (0,0,0)
-            self.LED_status[HOUR]["lightning"]["brightest"]     = (0,0,0)
-            self.LED_status[HOUR]["lightning"]["dimmest"]       = (0,0,0)
+            self.LED_status[HOUR]["lightning"]["entry_color"]   = (0.,0.,0.)
+            self.LED_status[HOUR]["lightning"]["brightest"]     = (0.,0.,0.)
+            self.LED_status[HOUR]["lightning"]["dimmest"]       = (0.,0.,0.)
             self.LED_status[HOUR]["lightning"]["intervals"]     = [1,1]
 
         # Memory for uniform shows
@@ -692,6 +692,9 @@ class LedHandler(object):
                                         LED_DMA, LED_INVERT )
         # Intialize the library (must be called once before other functions).
         self.strip.begin()
+
+        # for waiting between frames
+        self.t_a = time.time()
 
 
     #----------  CONVENIENCE FUNCTIONS  ----------#
@@ -731,19 +734,20 @@ class LedHandler(object):
         RGB = []
         for i in color:
             if i < 0:
-                x = 0
+                x = 0.
             elif i > 255:
-                x = 255
+                x = 255.
             else:
                 x = i
-            RGB.append( int(x) )
+            RGB.append( float(x) )
         R, G, B = RGB
         return (R,G,B)
 
     def dim(self, color, decimal):
         RGB_dimmed_floats = tuple(np.multiply(color, decimal))
         r, g, b = RGB_dimmed_floats
-        RGB_dimmed = (int(r), int(g), int(b))
+        RGB_dimmed = (r, g, b)
+        #RGB_dimmed = (int(r), int(g), int(b))
         return RGB_dimmed
 
     def dim_carefully_keep_hue(self, color, decimal):
@@ -756,7 +760,8 @@ class LedHandler(object):
         return RGB_dimmed
 
     def dim_carefully_keep_brightness(self, color, decimal):
-        RGB_dimmed = tuple( map(lambda x: int(x*decimal) or (x and 1), color) )
+        #RGB_dimmed = tuple( map(lambda x: int(x*decimal) or (x and 1), color) )
+        RGB_dimmed = tuple( map(lambda x: int(x*decimal)*1.0 or float(x and 1), color) )
         return RGB_dimmed
 
 
@@ -865,7 +870,7 @@ class LedHandler(object):
     def setColor(self, HOUR, color):
         capRGB = self.capRGB(color)
         R, G, B = capRGB
-        self.setColorRGB(HOUR, R, G, B)
+        self.setColorRGB( HOUR, int(R), int(G), int(B) )
 
     def setColorRGB(self, HOUR, R, G, B):
         step          = (LED_COUNT / ACTIVE_LEDS)
@@ -899,9 +904,12 @@ class LedHandler(object):
         self.setColor(HOUR, color)
     
     def update_display(self):
+        while time.time() - self.t_a < LATENCY:
+            pass
         Sky.set_12_Hours(DISPLAY_TYPE)
         self.strip.show()
-        time.sleep(LATENCY)
+        self.t_a = time.time()
+        #time.sleep(LATENCY)
 
 
     #----------  COMPLEX METHODS  ----------#
@@ -928,7 +936,7 @@ class LedHandler(object):
         # Drift initially, before checking end conditions
         if not self.LED_status[HOUR]["drift"]["status"]:
             self.LED_status[HOUR]["RGB"]["now"] = color1
-            self.LED_status[HOUR]["drift"]["status"] = interval
+            self.LED_status[HOUR]["drift"]["status"] = interval+1
         else:
             self.LED_status[HOUR]["drift"]["status"] -= 1
 
@@ -999,7 +1007,6 @@ class LedHandler(object):
         RGB_now         = LED_status["RGB"]["now"]
         up_interval     = intervals[0]      # Faster
         down_interval   = intervals[1]  # Slower
-        drift_status    = LED_status["drift"]["status"]
     
         # Initialize thunder bolt
         if LED_status["lightning"]["status"] == "start":
@@ -1049,7 +1056,7 @@ class LedHandler(object):
         dimmest     = LED_status["lightning"]["dimmest"]
         intervals   = LED_status["lightning"]["intervals"]
 
-        if status in (True, "start"):
+        if status or status == "start":
             RGB_final = self.thunderBolt(HOUR, entry_color, brightest, dimmest, intervals)
             LED_status["RGB"]["now"] = RGB_final
             return RGB_final
@@ -1226,8 +1233,8 @@ def update_weather_info():
 #    #item["summary"] = "start_up"
 #    #item["summary"] = "clear"
 #    #item["summary"] = "cloudy"
-#    item["summary"] = "partly cloudy"
-#    #item["summary"] = "light rain"
+#    #item["summary"] = "partly cloudy"
+#    item["summary"] = "light rain"
 #    #item["summary"] = "thunderstorm"
 #    #item["summary"] = "snow"
 #    #item["summary"] = "wind"
@@ -1236,6 +1243,7 @@ def update_weather_info():
 #
 #LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
 #while True:
+#    print LedHandler.LED_status['01']['RGB']['now']
 #    LedHandler.update_display()
 
 #-------------------------------------------------------------------------------

@@ -41,9 +41,9 @@ ACTIVE_LEDS     = 12        # (If you have 24 LEDs, but only want one lit up for
 
 
 #------------------------------- CUSTOMIZATION ---------------------------------
-CURSOR_COLOR       = magenta    # Cursor color if weather is up-to-date
+CURSOR_COLOR       = red        # Cursor color if weather is up-to-date
 CURSOR_COLOR_API   = cyan       # Cursor color if weather is calling API
-CURSOR_COLOR_ERROR = red        # Cursor color if weather API call fails
+CURSOR_COLOR_ERROR = black      # Cursor color if weather API call fails
 DISPLAY_MINUTE     = False      # True will display the minute hand. False won't
 MINUTE_CURSOR_DIM  = 0.5        # Amount to dim minute cursor
 
@@ -57,7 +57,7 @@ SLEEP_START    = '9:00pm'   # Time to sleep clock (24-hr format - 'HH:MM')
 SLEEP_STOP     = '6:30am'   # Time to wake clock up (24-hr format - 'HH:MM')
 
 DISPLAY_TYPE   = "uniform"  #  "static", "uniform", or "unique"
-LATENCY        = 0.035      # time between LED update (frame length)
+LATENCY        = 0.05       # time between LED update (frame length)
 
 
 #------------------------------- OTHER HARDWARE --------------------------------
@@ -81,7 +81,7 @@ STATUS_LED_PIN            = 16  # A simple status LED (if you have one).
 #    "dim clock"
 #    "faded clock"
 
-PROFILE = "dim clock"
+PROFILE = "faded clock"
 
 if PROFILE == "disk":
     ACTIVE_LEDS                = LED_COUNT
@@ -102,7 +102,7 @@ elif PROFILE == "clock":
     DIM_BY_HOUR                = False
 elif PROFILE == "dim clock":
     ACTIVE_LEDS                = NUMBER_OF_HOURS
-    CLOCK_BRIGHTNESS           = 5
+    CLOCK_BRIGHTNESS           = 10
     DIM_BY_HOUR                = False
 elif PROFILE == "faded clock":
     ACTIVE_LEDS                = NUMBER_OF_HOURS
