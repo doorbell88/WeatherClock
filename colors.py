@@ -17,3 +17,14 @@ dark_blue       =   (0, 0, 100)
 gray_blue       =   (50, 50, 200)
 light_gray      =   (100, 100, 100)
 gray            =   (50, 50, 50)
+
+
+# Get lowest nonzero LED value
+colors = filter(lambda x: '__' not in x, dir())
+lowest = 255
+for color in colors:
+    c_min = min(eval(color))
+    if c_min > 0 and c_min < lowest:
+        lowest = c_min
+
+DIMMEST = (255/lowest) + 1

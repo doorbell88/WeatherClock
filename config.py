@@ -47,7 +47,7 @@ CURSOR_COLOR_ERROR = black      # Cursor color if weather API call fails
 DISPLAY_MINUTE     = False      # True will display the minute hand. False won't
 MINUTE_CURSOR_DIM  = 0.5        # Amount to dim minute cursor
 
-CLOCK_BRIGHTNESS  = 5       # Overall brightness of the clock (0-255)
+CLOCK_BRIGHTNESS  = DIMMEST # Overall brightness of the clock (0-255)
 DIM_BY_HOUR       = False   # If True, each hour after current hour dims
 DIM_BY_HOUR_VALUE = 0.70    # (If DIM_BY_HOUR is True, dims each hour by this
                             #  amount successively.)
@@ -81,7 +81,7 @@ STATUS_LED_PIN            = 16  # A simple status LED (if you have one).
 #    "dim clock"
 #    "faded clock"
 
-PROFILE = "faded clock"
+PROFILE = "dim clock"
 
 if PROFILE == "disk":
     ACTIVE_LEDS                = LED_COUNT
@@ -89,7 +89,7 @@ if PROFILE == "disk":
     DIM_BY_HOUR                = False
 elif PROFILE == "dim disk":
     ACTIVE_LEDS                = LED_COUNT
-    CLOCK_BRIGHTNESS           = 5
+    CLOCK_BRIGHTNESS           = DIMMEST
     DIM_BY_HOUR                = False
 elif PROFILE == "faded disk":
     ACTIVE_LEDS                = LED_COUNT
@@ -102,7 +102,7 @@ elif PROFILE == "clock":
     DIM_BY_HOUR                = False
 elif PROFILE == "dim clock":
     ACTIVE_LEDS                = NUMBER_OF_HOURS
-    CLOCK_BRIGHTNESS           = 10
+    CLOCK_BRIGHTNESS           = DIMMEST
     DIM_BY_HOUR                = False
 elif PROFILE == "faded clock":
     ACTIVE_LEDS                = NUMBER_OF_HOURS
