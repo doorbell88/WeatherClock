@@ -36,7 +36,8 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, \
                    NUMBER_OF_HOURS, ACTIVE_LEDS, CLOCK_BRIGHTNESS, \
                    DIM_BY_HOUR, DIM_BY_HOUR_VALUE, \
-                   CURSOR_COLOR, CURSOR_COLOR_API, CURSOR_COLOR_ERROR, \
+                   CURSOR_COLOR_SKY, CURSOR_COLOR_TEMP, \
+                   CURSOR_COLOR_API, CURSOR_COLOR_ERROR, \
                    DISPLAY_MINUTE, MINUTE_CURSOR_DIM, DISPLAY_TYPE, LATENCY, \
                    SLEEP_AT_NIGHT, SLEEP_START, SLEEP_STOP
 
@@ -359,9 +360,10 @@ class Sky(object):
             HOUR_12     = '{:02}'.format(int(HOUR_24) % 12)
             summary     = this_hour["summary"]
             icon        = this_hour["icon"]
+            temp        = this_hour["temp"]
 
             # set the hour
-            self.setHour(HOUR_12, summary, icon, display_type)
+            self.setHour(HOUR_12, summary, icon, temp, display_type)
             
             # Reset color values to pure (undimmed, unadjusted) color
             LED_status  = LedHandler.LED_status[HOUR_12]
@@ -374,12 +376,12 @@ class Sky(object):
                 #LedHandler.setLEDBrightness(HOUR_12, 0)
                 summary     = "cursor"
                 icon        = "cursor"
-                self.setHour(HOUR_12, summary, icon, display_type)
+                self.setHour(HOUR_12, summary, icon, temp, display_type)
             elif DISPLAY_MINUTE and (i == minute_position):
                 #LedHandler.setLEDBrightness(HOUR_12, 0)
                 summary     = "cursor"
                 icon        = "cursor"
-                self.setHour(HOUR_12, summary, icon, display_type)
+                self.setHour(HOUR_12, summary, icon, temp, display_type)
                 if not DIM_BY_HOUR:
                     LedHandler.setLEDBrightness(HOUR_12, MINUTE_CURSOR_DIM)
             # Dim each hour after current a little more
@@ -389,7 +391,7 @@ class Sky(object):
 
             LedHandler.updateLED(HOUR_12)
 
-    def setHour(self, HOUR, summary, icon, display_type):
+    def setHour(self, HOUR, summary, icon, temp, display_type):
         weather_type = self.determineWeather(HOUR, summary, icon)
         if display_type == 'unique':
             self.setHourUnique(HOUR, weather_type)
@@ -397,6 +399,10 @@ class Sky(object):
             self.setHourUniform(HOUR, weather_type)
         elif display_type == 'static':
             self.setHourStatic(HOUR, weather_type)
+        elif display_type == 'temp':
+            self.setHourTemp(HOUR, weather_type, temp)
+        else:
+            self.setHourTemp(HOUR, weather_type, temp)
 
     def setHourUnique(self, HOUR, weather_type):
         # start_up is a special light show, while starting up
@@ -519,6 +525,32 @@ class Sky(object):
         LedHandler.LED_status[HOUR]["RGB"]["dimmed"]    = RGB_final
         LedHandler.LED_status[HOUR]["RGB"]["adjusted"]  = RGB_final
     
+    def setHourTemp(self, HOUR, weather_type, temp):
+        if weather_type == 'start_up':
+            RGB_final = LedHandler.LED_status["start_up"]["RGB"]["now"]
+        elif weather_type == 'cursor':
+            RGB_final = LedHandler.LED_status["cursor"]["RGB"]["now"]
+        else:
+            # Note:  Temperature is reported in Fahrenheit
+            temp_map = { (-100,32)  : white,
+                         (32,  40)  : light_blue,
+                         (40,  50)  : blue,
+                         (50,  60)  : cyan,
+                         (60,  70)  : green,
+                         (70,  75)  : green_yellow,
+                         (75,  80)  : yellow,
+                         (80,  90)  : orange,
+                         (90, 100)  : magenta,
+                         (100,200)  : red,
+                       }
+            for (low,high) in temp_map:
+                if low <= temp < high:
+                    RGB_final = temp_map[(low,high)]
+                    break
+
+        LedHandler.LED_status[HOUR]["RGB"]["now"]       = RGB_final
+        LedHandler.LED_status[HOUR]["RGB"]["dimmed"]    = RGB_final
+        LedHandler.LED_status[HOUR]["RGB"]["adjusted"]  = RGB_final
 
     #----------  WEATHER HELPER FUNCTIONS  ----------#
 
@@ -1221,7 +1253,10 @@ def update_weather_info():
         cursor_color = CURSOR_COLOR_ERROR
         print "ERROR OCCURRED WHILE CALLING OR PARSING WEATHER."
     else:
-        cursor_color = CURSOR_COLOR
+        if "temp" in DISPLAY_TYPE:
+            cursor_color = CURSOR_COLOR_TEMP
+        else:
+            cursor_color = CURSOR_COLOR_SKY
     finally:
         time.sleep(1)
 

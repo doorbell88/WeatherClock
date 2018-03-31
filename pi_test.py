@@ -28,8 +28,8 @@ strip.begin()
 #print "  {}".format(tuple( map(lambda x: x/dimmest_divisor, color) ))
 
 
-color = (255, 10, 0)
-decimal = 0.05
+color = (180, 255, 0)
+decimal = 1
 dimmed_color = tuple( map(lambda x: int(x*decimal) or (x and 1), color) )
 #divisor = int(1/decimal)
 #dimmed_color = tuple( map(lambda x: int(x/divisor or (x and 1)), color) )

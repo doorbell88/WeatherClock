@@ -41,7 +41,8 @@ ACTIVE_LEDS     = 12        # (If you have 24 LEDs, but only want one lit up for
 
 
 #------------------------------- CUSTOMIZATION ---------------------------------
-CURSOR_COLOR       = red        # Cursor color if weather is up-to-date
+CURSOR_COLOR_SKY   = red        # Cursor color if weather is up-to-date
+CURSOR_COLOR_TEMP  = violet     # Cursor color if weather is up-to-date
 CURSOR_COLOR_API   = cyan       # Cursor color if weather is calling API
 CURSOR_COLOR_ERROR = black      # Cursor color if weather API call fails
 DISPLAY_MINUTE     = False      # True will display the minute hand. False won't

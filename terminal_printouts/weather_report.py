@@ -23,7 +23,6 @@ import time
 import os
 import sys
 import re
-import numpy as np
 from random import randint, choice
 from termcolor import colored, cprint
 from subprocess import check_output
@@ -41,6 +40,39 @@ number_of_LEDs = 12
 
 
 #####  CLASSES  #####
+
+class Numpy(object):
+    """
+    Mimic a few simple numpy methods.
+    (Since numpy is very large, and it takes hours to install from scratch.)
+    """
+    def add(self, lst, x):
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: float(i)+x, lst)
+        else:
+            return map(lambda i,j: float(i)+j, lst, x)
+
+    def subtract(self, lst, x):
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: i-x, lst)
+        else:
+            return map(lambda i,j: float(i)-j, lst, x)
+
+    def multiply(self, lst, x):
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: float(i)*x, lst)
+        else:
+            return map(lambda i,j: float(i)*j, lst, x)
+
+    def divide(self, lst, x):
+        if type(x) == type(0) or type(x) == type(0.0):
+            return map(lambda i: float(i)/x, lst)
+        else:
+            return map(lambda i,j: float(i)/j, lst, x)
+
+    def abs(self, lst):
+        return map(lambda i: abs(float(i)), lst)
+
 
 class Parser(object):
     """
@@ -468,6 +500,7 @@ class Terminal(object):
 #####  SETUP  #####
 
 # Instantiate classes
+np = Numpy()
 Parser = Parser()
 Temp = Temp(-20, 120)
 TempDisplayer = TempDisplayer()
