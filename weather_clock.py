@@ -551,7 +551,6 @@ class Sky(object):
             temp_map = [ (-100, white),
                          (32,   white),
                          (40,   blue),
-                         (50,   cyan),
                          (60,   green_yellow),
                          (70,   yellow),
                          (80,   orange),
