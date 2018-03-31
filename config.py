@@ -57,7 +57,7 @@ SLEEP_AT_NIGHT = True       # If True clock doesn't light during sleep hours
 SLEEP_START    = '9:00pm'   # Time to sleep clock (24-hr format - 'HH:MM')
 SLEEP_STOP     = '6:30am'   # Time to wake clock up (24-hr format - 'HH:MM')
 
-DISPLAY_TYPE   = "uniform"  #  "static", "uniform", or "unique"
+DISPLAY_TYPE   = "temp"     #  "static", "uniform", "unique", or "temp"
 LATENCY        = 0.05       # time between LED update (frame length)
 
 
