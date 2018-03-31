@@ -532,21 +532,47 @@ class Sky(object):
             RGB_final = LedHandler.LED_status["cursor"]["RGB"]["now"]
         else:
             # Note:  Temperature is reported in Fahrenheit
-            temp_map = { (-100,32)  : white,
-                         (32,  40)  : light_blue,
-                         (40,  50)  : blue,
-                         (50,  60)  : cyan,
-                         (60,  70)  : green,
-                         (70,  75)  : green_yellow,
-                         (75,  80)  : yellow,
-                         (80,  90)  : orange,
-                         (90, 100)  : magenta,
-                         (100,200)  : red,
-                       }
-            for (low,high) in temp_map:
-                if low <= temp < high:
-                    RGB_final = temp_map[(low,high)]
+            #temp_map = { (-100,32)  : white,
+            #             (32,  40)  : light_blue,
+            #             (40,  50)  : blue,
+            #             (50,  60)  : cyan,
+            #             (60,  70)  : green,
+            #             (70,  75)  : green_yellow,
+            #             (75,  80)  : yellow,
+            #             (80,  90)  : orange,
+            #             (90, 100)  : magenta,
+            #             (100,200)  : red,
+            #           }
+            #for (low,high) in temp_map:
+            #    if low <= temp < high:
+            #        RGB_final = temp_map[(low,high)]
+            #        break
+
+            temp_map = [ (-100, white),
+                         (32,   white),
+                         (40,   blue),
+                         (50,   cyan),
+                         (60,   green_yellow),
+                         (70,   yellow),
+                         (80,   orange),
+                         (90,   magenta),
+                         (100,  red),
+                         (200,  red),
+                       ]
+            for (i,(t,c)) in enumerate(temp_map):
+                if temp < t:
+                    t_low,  c_low  = temp_map[i]
+                    t_high, c_high = temp_map[i-1]
                     break
+
+            # get the position in temperature between low and high
+            d_bounds      = float(t_high - t_low)
+            d_low_temp    = float(temp - t_low)
+            d_fraction    = d_low_temp / d_bounds
+            # get the position in color between low and high
+            dRGB_bounds   = LedHandler._dRGB(c_low, c_high)
+            dRGB_low_temp = np.multiply(dRGB_bounds, d_fraction)
+            RGB_final     = np.add(c_low, dRGB_low_temp)
 
         LedHandler.LED_status[HOUR]["RGB"]["now"]       = RGB_final
         LedHandler.LED_status[HOUR]["RGB"]["dimmed"]    = RGB_final
@@ -1285,7 +1311,7 @@ def update_weather_info():
 # Turn on LEDs right away
 print "startup LED show"
 LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
-start_up_time = 4
+start_up_time = 0
 LedHandler.start_up(start_up_time)
 print "done with startup LED show"
 time.sleep(1)
