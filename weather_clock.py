@@ -258,7 +258,7 @@ class Sky(object):
 
         # Static display colors (if desired)
         self.start_up_static        = green
-        self.clear_static           = yellow
+        self.clear_static           = sun_yellow
         self.cloudy_static          = gray
         self.partly_cloudy_static   = light_yellow
         self.snow_static            = white
@@ -553,7 +553,7 @@ class Sky(object):
                          (40,   blue),
                          (50,   cyan),
                          (65,   green),
-                         (70,   yellow),
+                         (70,   sun_yellow),
                          (80,   orange),
                          (90,   magenta),
                          (100,  red),
@@ -597,7 +597,7 @@ class Sky(object):
         
         # Lists of color choices
         dim_whites  = [tuple(np.divide(white,x)) for x in range(5,10)]
-        warm_colors = [red, orange, magenta, violet, yellow, light_yellow]
+        warm_colors = [red, orange, magenta, violet, sun_yellow, light_yellow]
         cool_colors = [blue, indigo, cyan]
         end_colors  = dim_whites + warm_colors + cool_colors
         
@@ -631,7 +631,7 @@ class Sky(object):
         return RGB_final
 
     def clear(self, HOUR):
-        color = yellow
+        color = sun_yellow
         RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
         return RGB_final
         
@@ -1311,7 +1311,7 @@ def update_weather_info():
 # Turn on LEDs right away
 print "startup LED show"
 LedHandler.setClockBrightness(CLOCK_BRIGHTNESS)
-start_up_time = 0
+start_up_time = 4.5
 LedHandler.start_up(start_up_time)
 print "done with startup LED show"
 time.sleep(1)
