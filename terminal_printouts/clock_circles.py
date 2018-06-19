@@ -140,15 +140,10 @@ class Parser(object):
     Parses weather data from Dark Sky API
     """
     def __init__(self):
-        # (7am - 6am next day)
+        # (24 hours, today and tomorrow)
         self.today_weather = {}
         self.tomorrow_weather = {}
-        self.yesterday_weather = {}
         
-        # (0 - 23 hour)
-        self.today_24 = {}
-        self.tomorrow_24 = {}
-
         # (next 12 hours)
         self.clock_12 = {}
         self.next_12 = []
@@ -159,6 +154,7 @@ class Parser(object):
     def getWeather(self, time_window):
         # Get forecast from Dark Sky API
         forecast = forecastio.load_forecast(api_key, lat, lng, time=time_window)
+        self.offset = forecast.offset()
         byHour = forecast.hourly()
         
         current_conditions = forecast.currently()
@@ -172,9 +168,9 @@ class Parser(object):
         Hours = {}
         # Get temp and summary for the hour
         for hourlyData in byHour.data:
-            time = str(hourlyData.time)
-            hour = str(hourlyData.time)[11:13]
-            day = str(hourlyData.time)[8:10]
+            time = hourlyData.time + datetime.timedelta(hours=self.offset)
+            hour = "{:02d}".format(time.hour)
+            day = str(time.day)
             temp = hourlyData.temperature
             summary = '{}'.format(hourlyData.summary)
             icon = '{}'.format(hourlyData.icon)
@@ -205,56 +201,21 @@ class Parser(object):
         tomorrow = today + datetime.timedelta(days=1)
         yesterday = today + datetime.timedelta(days=-1)
 
-        # Find weather (7am - 6am next day)
+        # Find weather (0:00 - 23:00, today and tomorrow)
         self.today_weather = self.getWeather(today)
         self.tomorrow_weather = self.getWeather(tomorrow)
-        self.yesterday_weather = self.getWeather(yesterday)
-
-        unknown_hour_dict = {"time": "", "temp": "", "summary": "", "icon": ""}
-
-        # Get current conditions
-        #self.getCurrentConditions()
-        
-        def parse24(destination_dict, day1, day2):
-            # Parse into 24-hour chunks (0 - 23 hour)
-            i=0
-            while i < 7:
-                hour = '{:02d}'.format(i)
-                try:
-                    destination_dict[hour] = day1[hour]
-                except KeyError:
-                    destination_dict[hour] = day1["05"]     #Daylight Savings
-                i+=1
-            i=7
-            while i <= 23:
-                hour = '{:02d}'.format(i)
-                try:
-                    destination_dict[hour] = day2[hour]
-                except KeyError:
-                    destination_dict[hour] = day2["22"]     #Daylight Savings
-                i+=1
-    
-        # Parse into 24-hour chunks (0 - 23 hour)
-        # (Today)
-        parse24(    self.today_24,
-                    self.yesterday_weather,
-                    self.today_weather)
-        # (Tomorrow)
-        parse24(    self.tomorrow_24,
-                    self.today_weather,
-                    self.tomorrow_weather)
 
         # Parse into 12-hour chunks (0 - 11 O'clock)
-        current_time = int( str(today)[11:13] )
+        current_time = datetime.datetime.now().hour
         self.clock_12 = {}
         self.next_12 = []
         for i in range(number_of_LEDs):
             hour = '{:02d}'.format(current_time + i)
             hour_12 = '{:02d}'.format(int(hour) % 12)
             if int(hour) <= 23:
-                self.clock_12[hour_12] = self.today_24[hour]
+                self.clock_12[hour_12] = self.today_weather[hour]
             elif int(hour) > 23:
-                self.clock_12[hour_12] = self.tomorrow_24[hour_12]
+                self.clock_12[hour_12] = self.tomorrow_weather[hour_12]
             self.next_12.append( self.clock_12[hour_12] )
 
 
