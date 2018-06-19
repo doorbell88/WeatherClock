@@ -1035,9 +1035,6 @@ class Temp(object):
         self.low = time_range[ str(coldest_hour) ]["temp"]
 
     def getCurrentTemp(self):
-        #current_time = datetime.datetime.now()
-        #current_hour = str(current_time)[11:13]
-        #self.current = Parser.today_24[current_hour]["temp"]
         self.current = Parser.current["temp"]
 
     def setHands(self, time_range):
