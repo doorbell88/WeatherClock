@@ -97,13 +97,13 @@ class Parser(object):
     Parses weather data from Dark Sky API
     """
     def __init__(self):
-        # (24 hours, today and tomorrow)
+        # (7am - 6am next day)
         self.today_weather = {}
         self.tomorrow_weather = {}
         
         # (next 12 hours)
         self.clock_12 = {}
-        self.next_12 = []
+        self.next_12  = []
 
         # populate self.next_12
         clock_item = { "icon"    : "",
@@ -158,7 +158,7 @@ class Parser(object):
     def getCurrentConditions(self):
         current_time = datetime.datetime.now()
         current_hour = str(current_time)[11:13]
-        forecast = forecastio.load_forecast(api_key, lat, lng)
+        forecast = forecastio.load_forecast(DARK_SKY_API_KEY, LATITUDE, LONGITUDE)
         current_conditions = forecast.currently()
         temp = current_conditions.temperature
         summary = current_conditions.summary
@@ -166,11 +166,15 @@ class Parser(object):
         self.current["summary"] = summary
         return temp, summary
 
-    def parseWeather(self):
+    def parseWeather(self, API_update=True):
         # Set time points
         today = datetime.datetime.now()
         tomorrow = today + datetime.timedelta(days=1)
-        yesterday = today + datetime.timedelta(days=-1)
+
+        if API_update:
+            # Find weather (7am - 6am next day)
+            self.today_weather = self.getWeather(today)
+            self.tomorrow_weather = self.getWeather(tomorrow)
 
         # Find weather (0:00 - 23:00, today and tomorrow)
         self.today_weather = self.getWeather(today)

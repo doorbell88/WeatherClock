@@ -138,7 +138,6 @@ class Parser(object):
         # Set time points
         today = datetime.datetime.now()
         tomorrow = today + datetime.timedelta(days=1)
-        yesterday = today + datetime.timedelta(days=-1)
 
         # Find weather (0:00 - 23:00, today and tomorrow)
         self.today_weather = self.getWeather(today)
