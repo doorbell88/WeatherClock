@@ -148,7 +148,7 @@ class Parser(object):
 
             # put temp and summary into this Hour's dictionary
             Hours[hour] = {}
-            Hours[hour]["time"] = time
+            Hours[hour]["time"] = str(time)
             Hours[hour]["temp"] = temp
             Hours[hour]["summary"] = summary
             Hours[hour]["icon"] = icon
@@ -176,15 +176,15 @@ class Parser(object):
             self.today_weather = self.getWeather(today)
             self.tomorrow_weather = self.getWeather(tomorrow)
 
-        # Find weather (0:00 - 23:00, today and tomorrow)
-        self.today_weather = self.getWeather(today)
-        self.tomorrow_weather = self.getWeather(tomorrow)
+        ## Find weather (0:00 - 23:00, today and tomorrow)
+        #self.today_weather = self.getWeather(today)
+        #self.tomorrow_weather = self.getWeather(tomorrow)
 
         # Parse into 12-hour chunks (0 - 11 O'clock)
         current_time = datetime.datetime.now().hour
         self.clock_12 = {}
         self.next_12 = []
-        for i in range(number_of_LEDs):
+        for i in range(NUMBER_OF_HOURS):
             hour = '{:02d}'.format(current_time + i)
             hour_12 = '{:02d}'.format(int(hour) % 12)
             if int(hour) <= 23:
