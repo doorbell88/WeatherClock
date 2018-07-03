@@ -660,8 +660,11 @@ class Sky(object):
         return RGB_final
 
     def wind(self, HOUR):
-        color     = green
-        RGB_final = LedHandler.LED_status[HOUR]["RGB"]["now"] = color
+        color1          = sun_yellow
+        color2          = green
+        time_constant   = 8
+        fluxuation      = 5
+        RGB_final = LedHandler.flicker(HOUR, color1, color2, time_constant, fluxuation)
         return RGB_final
 
     def unknown(self, HOUR):
