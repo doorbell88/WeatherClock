@@ -5,8 +5,9 @@ import os, sys
 import subprocess
 import time
 from config import BUTTON_PIN, STATUS_LED_PIN, \
-                   BUTTON_QUICK_PRESS, BUTTON_HOLD_TIME_KILL, \
-                   BUTTON_HOLD_TIME_SHUTDOWN, BUTTON_HOLD_TIME_REBOOT
+                   BUTTON_HOLD_TIME_KILL, \
+                   BUTTON_HOLD_TIME_SHUTDOWN, \
+                   BUTTON_HOLD_TIME_REBOOT
 
 #--------------------------------- VARIABLES -----------------------------------
 WeatherClock_dir       = "/home/pi/WeatherClock"
@@ -25,17 +26,11 @@ LED_strip_script       = "{}/{}".format(WeatherClock_dir, LED_strip)
 
 
 stage = ""  # keeps track of what stage of a button hold you're in
-quick_press_start  = 0.0  #keeps track of quick presses
 
 #------------------------------- BUTTON ACTIONS --------------------------------
 def when_pressed():
     global stage
-    global quick_press_start
     print "pressed"
-
-    # clear the quick_press variables if a long time has passed
-    if time.time() - quick_press_start > BUTTON_QUICK_PRESS:
-        quick_press_start = time.time()
 
     # start recording how long button has been held down for (this press only)
     start_time = time.time()
@@ -44,47 +39,41 @@ def when_pressed():
     while btn.is_pressed:
         elapsed_time = time.time() - start_time
 
-        if elapsed_time <= BUTTON_QUICK_PRESS:
-            if quick_press_start == 0.0:
-                quick_press_start = time.time()
+        if elapsed_time <= BUTTON_HOLD_TIME_KILL:
+            action = "TOGGLE_MODE" 
+            stage = action
 
         elif BUTTON_HOLD_TIME_KILL <= elapsed_time < BUTTON_HOLD_TIME_REBOOT:
-            action = "KILL_SCRIPT" 
-            if action not in stage:
-                stage = action
-                print "calling kill script --> ({})".format(kill_script)
-                os.system(kill_script)
-                os.system("sudo python {}".format(LED_strip_script))
+            stage = "KILL_SCRIPT" 
+            print "calling kill script --> ({})".format(kill_script)
+            os.system(kill_script)
+            os.system("sudo python {}".format(LED_strip_script))
 
         elif BUTTON_HOLD_TIME_REBOOT <= elapsed_time < BUTTON_HOLD_TIME_SHUTDOWN:
-            action = "REBOOT" 
-            stage = action
+            stage = "REBOOT" 
             print "STAGING FOR REBOOT"
             os.system("sudo python {}".format(LED_reboot_script))
 
         elif (time.time() - start_time) >= BUTTON_HOLD_TIME_SHUTDOWN:
-            action = "SHUTDOWN" 
-            stage = action
+            stage = "SHUTDOWN" 
             print "STAGING FOR SHUTDOWN"
             os.system("sudo python {}".format(LED_shutdown_script))
 
 
 def when_released():
     global stage
-    global quick_press_start
     print "released"
 
-    if time.time() - quick_press_start < BUTTON_QUICK_PRESS:
+    if stage == "TOGGLE_MODE":
         toggle_mode()
 
     elif stage == "KILL_SCRIPT":
         toggle_weather_clock()
-        quick_press_start = 0.0
 
     elif stage == "REBOOT":
         reboot()
 
-    # reset action stage
+    # reset stage
     stage = ""
 
 
