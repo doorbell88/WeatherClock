@@ -24,23 +24,18 @@ LED_reboot_script      = "{}/{}".format(WeatherClock_dir, LED_reboot_sequence)
 LED_strip_script       = "{}/{}".format(WeatherClock_dir, LED_strip)
 
 
-stage = ""      # keeps track of what stage of a button hold you're in
-quick_press_start  = 0.0
-quick_press_counter = 0 # keeps track of how many times button has been pressed quickly
+stage = ""  # keeps track of what stage of a button hold you're in
+quick_press_start  = 0.0  #keeps track of quick presses
 
 #------------------------------- BUTTON ACTIONS --------------------------------
 def when_pressed():
     global stage
     global quick_press_start
-    global quick_press_counter
-    # start blinking with 1/2 second rate
-    #led.blink(on_time=0.5, off_time=0.5)
     print "pressed"
 
     # clear the quick_press variables if a long time has passed
     if time.time() - quick_press_start > BUTTON_QUICK_PRESS:
         quick_press_start = time.time()
-        quick_press_counter = 0
 
     # start recording how long button has been held down for (this press only)
     start_time = time.time()
@@ -53,21 +48,18 @@ def when_pressed():
             if quick_press_start == 0.0:
                 quick_press_start = time.time()
 
-        #elif BUTTON_HOLD_TIME_KILL <= elapsed_time < BUTTON_HOLD_TIME_REBOOT:
-        #    action = "KILL_SCRIPT" 
-        #    if action not in stage:
-        #        stage = action
-        #        print "calling kill script --> ({})".format(kill_script)
-        #        os.system(kill_script)
-        #        os.system("sudo python {}".format(LED_strip_script))
+        elif BUTTON_HOLD_TIME_KILL <= elapsed_time < BUTTON_HOLD_TIME_REBOOT:
+            action = "KILL_SCRIPT" 
+            if action not in stage:
+                stage = action
+                print "calling kill script --> ({})".format(kill_script)
+                os.system(kill_script)
+                os.system("sudo python {}".format(LED_strip_script))
 
         elif BUTTON_HOLD_TIME_REBOOT <= elapsed_time < BUTTON_HOLD_TIME_SHUTDOWN:
             action = "REBOOT" 
             stage = action
             print "STAGING FOR REBOOT"
-            print "calling kill script --> ({})".format(kill_script)
-            os.system(kill_script)
-            os.system("sudo python {}".format(LED_strip_script))
             os.system("sudo python {}".format(LED_reboot_script))
 
         elif (time.time() - start_time) >= BUTTON_HOLD_TIME_SHUTDOWN:
@@ -80,28 +72,19 @@ def when_pressed():
 def when_released():
     global stage
     global quick_press_start
-    global quick_press_counter
     print "released"
 
     if time.time() - quick_press_start < BUTTON_QUICK_PRESS:
-        quick_press_counter += 1
+        toggle_mode()
 
-        if quick_press_counter == 1:
-            toggle_mode()
-
-        elif quick_press_counter >=2:
-            toggle_weather_clock()
-            quick_press_counter = 0
-            quick_press_start = 0.0
+    elif stage == "KILL_SCRIPT":
+        toggle_weather_clock()
+        quick_press_start = 0.0
 
     elif stage == "REBOOT":
         reboot()
 
-    # (SHUTDOWN happens through btn.when_held, so it is not needed here)
-    #elif stage == "SHUTDOWN"
-    #    shutdown()
-
-    # reset list of actions done
+    # reset action stage
     stage = ""
 
 
@@ -118,14 +101,6 @@ def toggle_mode():
 
 
 def toggle_weather_clock():
-    #exit_status = os.WEXITSTATUS(os.system(kill_script))
-    ##if successfull, then the weather clock was just killed
-    #if exit_status == 0:
-    #    return
-    ## if unsuccessful, there was no weather clock process --> start one
-    #elif exit_status == 1:
-    #    start_weather_clock()
-
     weather_clock_pid = subprocess.check_output(get_weather_clock_pid)
     if weather_clock_pid:
         kill_weather_clock()
@@ -148,13 +123,13 @@ def start_weather_clock():
 def reboot():
     time.sleep(1)
     print "REBOOTING THE RASPBERRY PI NOW."
-    #os.system("sudo reboot")
+    os.system("sudo reboot")
 
 
 def shutdown():
     time.sleep(1)
     print "SHUTTING OFF THE RASPBERRY PI NOW."
-    #os.system("sudo poweroff")
+    os.system("sudo poweroff")
 
 
 
