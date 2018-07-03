@@ -38,7 +38,8 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
                    DIM_BY_HOUR, DIM_BY_HOUR_VALUE, \
                    CURSOR_COLOR_SKY, CURSOR_COLOR_TEMP, \
                    CURSOR_COLOR_API, CURSOR_COLOR_ERROR, \
-                   DISPLAY_MINUTE, MINUTE_CURSOR_DIM, DISPLAY_TYPE, LATENCY, \
+                   DISPLAY_MINUTE, MINUTE_CURSOR_DIM, \
+                   DISPLAY_TYPE, DISPLAY_MODE, LATENCY, \
                    SLEEP_AT_NIGHT, SLEEP_START, SLEEP_STOP
 
 
@@ -53,6 +54,8 @@ from config import LATITUDE, LONGITUDE, DARK_SKY_API_KEY, \
 #------------------------------- other options ---------------------------------
 NUMBER_OF_HOURS = 12
 cursor_color    = CURSOR_COLOR_API
+display_type    = DISPLAY_TYPE
+display_mode    = DISPLAY_MODE
 
 
 #===============================================================================
@@ -298,7 +301,7 @@ class Sky(object):
     
         return weather_type
 
-    def set_12_Hours(self, display_type):
+    def set_12_Hours(self, display_type, display_mode):
         next_12 = []
         for hour in Parser.next_12:
             next_12.append(hour)
@@ -327,7 +330,7 @@ class Sky(object):
             temp        = this_hour["temp"]
 
             # set the hour
-            self.setHour(HOUR_12, summary, icon, temp, display_type)
+            self.setHour(HOUR_12, summary, icon, temp, display_type, display_mode)
             
             # Reset color values to pure (undimmed, unadjusted) color
             LED_status  = LedHandler.LED_status[HOUR_12]
@@ -340,12 +343,12 @@ class Sky(object):
                 #LedHandler.setLEDBrightness(HOUR_12, 0)
                 summary     = "cursor"
                 icon        = "cursor"
-                self.setHour(HOUR_12, summary, icon, temp, display_type)
+                self.setHour(HOUR_12, summary, icon, temp, display_type, display_mode)
             elif DISPLAY_MINUTE and (i == minute_position):
                 #LedHandler.setLEDBrightness(HOUR_12, 0)
                 summary     = "cursor"
                 icon        = "cursor"
-                self.setHour(HOUR_12, summary, icon, temp, display_type)
+                self.setHour(HOUR_12, summary, icon, temp, display_type, display_mode)
                 if not DIM_BY_HOUR:
                     LedHandler.setLEDBrightness(HOUR_12, MINUTE_CURSOR_DIM)
             # Dim each hour after current a little more
@@ -355,14 +358,15 @@ class Sky(object):
 
             LedHandler.updateLED(HOUR_12)
 
-    def setHour(self, HOUR, summary, icon, temp, display_type):
+    def setHour(self, HOUR, summary, icon, temp, display_type, display_mode):
         weather_type = self.determineWeather(HOUR, summary, icon)
-        if display_type == 'unique':
-            self.setHourUnique(HOUR, weather_type)
-        elif display_type == 'uniform':
-            self.setHourUniform(HOUR, weather_type)
-        elif display_type == 'static':
-            self.setHourStatic(HOUR, weather_type)
+        if display_mode == 'sky':
+            if display_type == 'unique':
+                self.setHourUnique(HOUR, weather_type)
+            elif display_type == 'uniform':
+                self.setHourUniform(HOUR, weather_type)
+            elif display_type == 'static':
+                self.setHourStatic(HOUR, weather_type)
         elif display_type == 'temp':
             self.setHourTemp(HOUR, weather_type, temp)
         else:
@@ -928,7 +932,7 @@ class LedHandler(object):
     def update_display(self):
         while time.time() - self.t_a < LATENCY:
             pass
-        Sky.set_12_Hours(DISPLAY_TYPE)
+        Sky.set_12_Hours(display_type, display_mode)
         self.strip.show()
         self.t_a = time.time()
         #time.sleep(LATENCY)
@@ -1193,11 +1197,18 @@ LedHandler = LedHandler()
 
 #.................................................
 # register interrupt handler
-def signal_handler(signum, frame):
+def sigint_handler(signum, frame):
     # set all LEDs to black (off)
     LedHandler.turn_off_all_LEDs()
     sys.exit()
-signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGINT, sigint_handler)
+def sigterm_handler(signum, frame):
+    global display_mode
+    if display_mode == "sky":
+        display_mode = "temp"
+    else:
+        display_mode = "sky"
+signal.signal(signal.SIGTERM, sigterm_handler)
 #.................................................
 
 
@@ -1240,7 +1251,7 @@ def update_weather_info():
         cursor_color = CURSOR_COLOR_ERROR
         print "ERROR OCCURRED WHILE CALLING OR PARSING WEATHER."
     else:
-        if "temp" in DISPLAY_TYPE:
+        if "temp" in display_mode:
             cursor_color = CURSOR_COLOR_TEMP
         else:
             cursor_color = CURSOR_COLOR_SKY
