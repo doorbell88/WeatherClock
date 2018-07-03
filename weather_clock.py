@@ -523,7 +523,6 @@ class Sky(object):
                          (65,   green),
                          (70,   sun_yellow),
                          (80,   orange),
-                         (90,   magenta),
                          (100,  red),
                          (200,  red),
                        ]
@@ -1206,11 +1205,13 @@ def sigint_handler(signum, frame):
     sys.exit()
 signal.signal(signal.SIGINT, sigint_handler)
 def sigterm_handler(signum, frame):
-    global display_mode
+    global display_mode, cursor_color
     if display_mode == "sky":
         display_mode = "temp"
+        cursor_color = CURSOR_COLOR_TEMP
     else:
         display_mode = "sky"
+        cursor_color = CURSOR_COLOR_SKY
 signal.signal(signal.SIGTERM, sigterm_handler)
 #.................................................
 
