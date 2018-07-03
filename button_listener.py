@@ -41,36 +41,43 @@ def when_pressed():
 
         if elapsed_time <= BUTTON_HOLD_TIME_KILL:
             action = "TOGGLE_MODE" 
-            stage = action
+            if action not in stage:
+                stage += action
 
         elif BUTTON_HOLD_TIME_KILL <= elapsed_time < BUTTON_HOLD_TIME_REBOOT:
-            stage = "KILL_SCRIPT" 
-            print "calling kill script --> ({})".format(kill_script)
-            os.system(kill_script)
-            os.system("sudo python {}".format(LED_strip_script))
+            action = "KILL_SCRIPT" 
+            if action not in stage:
+                stage += action
+                kill_weather_clock()
 
         elif BUTTON_HOLD_TIME_REBOOT <= elapsed_time < BUTTON_HOLD_TIME_SHUTDOWN:
-            stage = "REBOOT" 
-            print "STAGING FOR REBOOT"
-            os.system("sudo python {}".format(LED_reboot_script))
+            action = "REBOOT" 
+            if action not in stage:
+                stage += action
+                print "STAGING FOR REBOOT"
+                os.system("sudo python {}".format(LED_reboot_script))
 
         elif (time.time() - start_time) >= BUTTON_HOLD_TIME_SHUTDOWN:
-            stage = "SHUTDOWN" 
-            print "STAGING FOR SHUTDOWN"
-            os.system("sudo python {}".format(LED_shutdown_script))
+            action = "SHUTDOWN" 
+            if action not in stage:
+                stage += action
+                print "STAGING FOR SHUTDOWN"
+                os.system("sudo python {}".format(LED_shutdown_script))
 
 
 def when_released():
     global stage
     print "released"
 
-    if stage == "TOGGLE_MODE":
+    if "TOGGLE_MODE" in stage and "KILL_SCRIPT" not in stage:
         toggle_mode()
 
-    elif stage == "KILL_SCRIPT":
-        toggle_weather_clock()
+    elif "KILL_SCRIPT" in stage and "REBOOT" not in stage:
+        #toggle_weather_clock()
+        #kill_weather_clock()
+        pass
 
-    elif stage == "REBOOT":
+    elif "REBOOT" in stage and "SHUTDOWN" not in stage:
         reboot()
 
     # reset stage
@@ -79,8 +86,8 @@ def when_released():
 
 def toggle_mode():
     # toggle between "sky" and "temp" modes
-    print "Sending SIGINT to toggle mode on weather clock"
-    weather_clock_pid = subprocess.check_output(get_weather_clock_pid)
+    print "Sending SIGTERM to toggle mode on weather clock"
+    weather_clock_pid = subprocess.check_output(get_weather_clock_pid).strip()
     try:
         weather_clock_pid = int(weather_clock_pid)
     except:
@@ -89,22 +96,32 @@ def toggle_mode():
         os.kill(weather_clock_pid, signal.SIGTERM)
 
 
-def toggle_weather_clock():
-    weather_clock_pid = subprocess.check_output(get_weather_clock_pid)
-    if weather_clock_pid:
-        kill_weather_clock()
-    else:
-        start_weather_clock()
+#def toggle_weather_clock():
+#    weather_clock_pid = subprocess.check_output(get_weather_clock_pid).strip()
+#    try:
+#        weather_clock_pid = int(weather_clock_pid)
+#    except:
+#        start_weather_clock()
+#    else:
+#        kill_weather_clock()
 
 
 def kill_weather_clock():
-    print "calling kill script --> ({})".format(kill_script)
-    os.system(kill_script)
-    os.system("sudo python {}".format(LED_strip_script))
+    #print "calling kill script --> ({})".format(kill_script)
+    #os.system(kill_script)
+    #os.system("sudo python {}".format(LED_strip_script))
+
+    weather_clock_pid = subprocess.check_output(get_weather_clock_pid).strip()
+    try:
+        weather_clock_pid = int(weather_clock_pid)
+    except:
+        pass
+    else:
+        os.kill(weather_clock_pid, signal.SIGINT)
+        os.system("sudo python {}".format(LED_strip_script))
 
 
 def start_weather_clock():
-    os.system(kill_script)
     print "STARTING THE WEATHER CLOCK"
     os.system("sudo python {} &".format(weather_clock_script))
 
