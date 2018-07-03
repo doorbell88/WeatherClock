@@ -53,7 +53,7 @@ def when_pressed():
             if quick_press_start == 0.0:
                 quick_press_start = time.time()
 
-        #if BUTTON_HOLD_TIME_KILL <= elapsed_time < BUTTON_HOLD_TIME_REBOOT:
+        #elif BUTTON_HOLD_TIME_KILL <= elapsed_time < BUTTON_HOLD_TIME_REBOOT:
         #    action = "KILL_SCRIPT" 
         #    if action not in stage:
         #        stage = action
@@ -63,17 +63,18 @@ def when_pressed():
 
         elif BUTTON_HOLD_TIME_REBOOT <= elapsed_time < BUTTON_HOLD_TIME_SHUTDOWN:
             action = "REBOOT" 
-            if action not in stage:
-                stage = action
-                print "STAGING FOR REBOOT"
-                os.system("sudo python {}".format(LED_reboot_script))
+            stage = action
+            print "STAGING FOR REBOOT"
+            print "calling kill script --> ({})".format(kill_script)
+            os.system(kill_script)
+            os.system("sudo python {}".format(LED_strip_script))
+            os.system("sudo python {}".format(LED_reboot_script))
 
         elif (time.time() - start_time) >= BUTTON_HOLD_TIME_SHUTDOWN:
             action = "SHUTDOWN" 
-            if action not in stage:
-                stage = action
-                print "STAGING FOR SHUTDOWN"
-                os.system("sudo python {}".format(LED_shutdown_script))
+            stage = action
+            print "STAGING FOR SHUTDOWN"
+            os.system("sudo python {}".format(LED_shutdown_script))
 
 
 def when_released():
